@@ -27,7 +27,6 @@ router.post('/files', async (ctx) => {
     await client.putObject(bucket, key, buffer, {
       'Content-Type': 'image/png', // 添加http header
       'Cache-Control': 'public, max-age=31536000', // 指定缓存指令
-      'x-bce-storage-class': 'COLD', // 指定存储类型
       'x-bce-acl': 'public-read',
     });
     fs.unlink(file.filepath, (err) => {

@@ -137,7 +137,6 @@ module.exports = {
     return await client.putObject(bucket, object, Buffer.from(content, 'utf8'), {
       'Content-Type': ContentType, // 添加http header
       'Cache-Control': 'public, max-age=31536000', // 指定缓存指令
-      'x-bce-storage-class': 'COLD', // 指定存储类型
       'x-bce-acl': 'public-read',
     });
   },

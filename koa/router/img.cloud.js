@@ -39,7 +39,6 @@ router.post('/upload/files', async (ctx) => {
     await client.putObject(bucket, key, buffer, {
       'Content-Type': file.mimetype, // 添加http header
       'Cache-Control': 'public, max-age=31536000', // 指定缓存指令
-      'x-bce-storage-class': 'COLD', // 指定存储类型
       'x-bce-acl': 'public-read',
     });
     // 删除临时文件
