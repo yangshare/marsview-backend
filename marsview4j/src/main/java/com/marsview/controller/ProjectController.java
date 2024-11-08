@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * @createTime: 2024/9/27 15:11
  */
 @RestController
@@ -94,7 +94,7 @@ public class ProjectController extends BasicController {
     projects.setCreatedAt(new Date());
     projects.setUserId(users.getId());
     projects.setUserName(users.getUserName());
-    return getUpdateResponse(projectsService.save(projects) ? 1 : 0, "项目创建失败");
+    return getUpdateResponse(projectsService.save(projects), "项目创建失败");
   }
 
   /**
@@ -117,6 +117,6 @@ public class ProjectController extends BasicController {
   @PostMapping("update")
   public ResultResponse update(HttpServletResponse response, @RequestBody Projects projects) {
     projects.setUpdatedAt(new Date());
-    return getUpdateResponse(projectsService.updateById(projects) ? 1 : 0, "保存失败");
+    return getUpdateResponse(projectsService.updateById(projects), "保存失败");
   }
 }

@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * createTime: 2018-11-29 12:34
  */
 public class SessionUtils {

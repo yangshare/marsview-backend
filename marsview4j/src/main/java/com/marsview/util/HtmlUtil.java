@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * createTime: 2018/5/10 10:36
  */
 public class HtmlUtil {

@@ -5,7 +5,7 @@ import com.marsview.domain.Pages;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * @createTime: 2024/9/27 17:11
  */
 public class PagesDto extends Pages {

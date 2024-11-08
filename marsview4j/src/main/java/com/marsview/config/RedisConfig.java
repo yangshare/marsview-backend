@@ -11,7 +11,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 /**
  * <p>说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * createTime: 2020/10/12 下午2:26
  */
 @Configuration

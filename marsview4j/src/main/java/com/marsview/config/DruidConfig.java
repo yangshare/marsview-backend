@@ -30,7 +30,7 @@ import java.util.Properties;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * createTime: 2018-12-06 14:51
  */
 @Configuration

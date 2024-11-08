@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * <p>@Configuration</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * @create: 2018－08－28 下午7:56
  */
 @Component

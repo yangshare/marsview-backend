@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * createTime: 2018-11-29 10:52
  */
 public class ResultResponse<T> implements Serializable {

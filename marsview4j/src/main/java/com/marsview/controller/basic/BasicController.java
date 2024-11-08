@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * @createTime: 2024/9/27 10:43
  */
 public class BasicController {
@@ -42,6 +42,11 @@ public class BasicController {
     public ResultResponse getUpdateResponse(int result, String message) {
         return Builder.of(ResultResponse::new).with(ResultResponse::setCode, result > 0 ? 0 : -1).with(ResultResponse::setMessage,
                 result > 0 ? null : message).build();
+    }
+
+    public ResultResponse getUpdateResponse(boolean result, String message) {
+        return Builder.of(ResultResponse::new).with(ResultResponse::setCode, result ? 0 : -1).with(ResultResponse::setMessage,
+                result ? null : message).build();
     }
 
     public ResultResponse getErrorResponse(int code, String message) {

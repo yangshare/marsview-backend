@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * @createTime: 2024/9/27 16:28
  */
 @RestController
@@ -55,7 +55,7 @@ public class PageController extends BasicController {
     pages.setUserId(users.getId());
     pages.setUserName(users.getUserName());
     pages.setCreatedAt(new Date());
-    return getUpdateResponse(pagesService.save(pages) ? 1 : 0, "创建失败");
+    return getUpdateResponse(pagesService.save(pages), "创建失败");
   }
 
   /**
@@ -134,7 +134,7 @@ public class PageController extends BasicController {
   @PostMapping("update")
   public ResultResponse update(HttpServletResponse response, @RequestBody Pages pages) {
     pages.setCreatedAt(new Date());
-    return getUpdateResponse(pagesService.updateById(pages) ? 1 : 0, "保存失败");
+    return getUpdateResponse(pagesService.updateById(pages), "保存失败");
   }
 
   /**

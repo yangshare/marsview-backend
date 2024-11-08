@@ -64,7 +64,7 @@ public class Lib implements Serializable {
     /**
      * 通行证ID
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      * 通行证名称

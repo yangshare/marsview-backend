@@ -6,7 +6,7 @@ import com.marsview.domain.Lib;
 /**
  * <p>说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * createTime: 2024/10/1 13:58
  */
 public class LibDto extends Lib {

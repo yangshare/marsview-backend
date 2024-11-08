@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 /**
  * <p>加密工具类</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * createTime: 2018/7/16 17:31
  */
 public class Md5Utils {

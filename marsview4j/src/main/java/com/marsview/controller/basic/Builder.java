@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 /**
  * <p>类说明</p>
  *
- * @author 张峰 zfvip_it@163.com
+ * @author yangshare simayifeng@gmail.com
  * @createTime: 2024/9/27 13:35
  */
 public class Builder<T> {
