@@ -1,18 +1,17 @@
 package com.marsview.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.marsview.controller.basic.ResultResponse;
-import com.marsview.domain.Lib;
-import com.marsview.domain.Menu;
-import com.marsview.domain.Users;
 import com.marsview.controller.basic.BasicController;
+import com.marsview.controller.basic.ResultResponse;
+import com.marsview.domain.Menu;
+import com.marsview.domain.Pages;
+import com.marsview.domain.Users;
+import com.marsview.dto.MenuDto;
 import com.marsview.service.MenuService;
-import com.marsview.util.HtmlUtil;
+import com.marsview.service.PagesService;
 import com.marsview.util.SessionUtils;
-import com.marsview.mapper.MenuMapper;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,18 +35,41 @@ public class MenuController extends BasicController {
     @Autowired
     private MenuService menuService;
 
+    @Autowired
+    private PagesService pagesService;
+
     /**
      * 创建菜单
      *
      * @param request
-     * @param menu
      */
     @PostMapping("create")
-    public ResultResponse create(HttpServletRequest request, @RequestBody Menu menu) {
+    public ResultResponse create(HttpServletRequest request, @RequestBody MenuDto menuDto) {
         Users user = SessionUtils.getUser(request);
+        // 只有菜单和页面类型支持自动创建页面
+        Long pageId = 0L;
+        if (menuDto.getType() != 2 && menuDto.getIs_create() == 1) {
+            Pages pages = new Pages();
+            pages.setUserId(user.getId());
+            pages.setUserName(user.getUserName());
+            pages.setIsPublic(1);
+            pages.setIsEdit(2);
+            pages.setProjectId(menuDto.getProject_id());
+            pagesService.save(pages);
+            pageId = pages.getId();
+        }
+
+        Menu menu = new Menu();
+        BeanUtils.copyProperties(menuDto, menu);
         menu.setUserId(user.getId());
         menu.setUserName(user.getUserName());
         menu.setCreatedAt(new Date());
+        menu.setProjectId(menuDto.getProject_id());
+        menu.setPageId(menuDto.getPage_id());
+        menu.setSortNum(menuDto.getSort_num());
+        menu.setPageId(pageId);
+
+
         return getUpdateResponse(menuService.save(menu), "新增失败");
     }
 
@@ -78,19 +100,19 @@ public class MenuController extends BasicController {
      * @param menu
      */
     @PostMapping("list")
-    public ResultResponse list(@RequestBody Menu menu) {
+    public ResultResponse list(@RequestBody MenuDto menu) {
         /**
          * 项目ID判断
          */
-        if (menu.getProjectId() == null || menu.getProjectId() == 0) {
+        if (menu.getProject_id() == null || menu.getProject_id() == 0) {
             return getErrorResponse("项目ID不能为空");
         }
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id", menu.getProjectId());
+        queryWrapper.eq("project_id", menu.getProject_id());
         if (StringUtils.hasText(menu.getName())) {
             queryWrapper.like("name", menu.getName());
         }
-        if (menu.getStatus() != -1) {
+        if (menu.getStatus() != null && menu.getStatus() != -1) {
             queryWrapper.eq("status", menu.getStatus());
         }
         return getResponse(Map.of("list", menuService.list(queryWrapper)));

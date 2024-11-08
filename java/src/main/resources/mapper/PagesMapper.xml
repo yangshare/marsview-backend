@@ -22,6 +22,7 @@
             <result property="prdState" column="prd_state" jdbcType="TINYINT"/>
             <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
             <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+            <result property="projectId" column="project_id" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -30,6 +31,6 @@
         is_public,is_edit,preview_img,
         stg_publish_id,pre_publish_id,prd_publish_id,
         stg_state,pre_state,prd_state,
-        updated_at,created_at
+        updated_at,created_at,project_id
     </sql>
 </mapper>

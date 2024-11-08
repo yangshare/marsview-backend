@@ -101,6 +101,11 @@ public class Pages implements Serializable {
      */
     private Date createdAt;
 
+    /**
+     * 项目ID
+     */
+    private Long projectId;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

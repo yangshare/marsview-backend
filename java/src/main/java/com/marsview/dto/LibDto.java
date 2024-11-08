@@ -2,6 +2,7 @@ package com.marsview.dto;
 
 
 import com.marsview.domain.Lib;
+import lombok.Data;
 
 /**
  * <p>说明</p>
@@ -9,6 +10,7 @@ import com.marsview.domain.Lib;
  * @author yangshare simayifeng@gmail.com
  * createTime: 2024/10/1 13:58
  */
+@Data
 public class LibDto extends Lib {
 
     /**
@@ -16,11 +18,4 @@ public class LibDto extends Lib {
      */
     private int type;
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
 }
