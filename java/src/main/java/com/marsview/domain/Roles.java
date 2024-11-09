@@ -59,7 +59,7 @@ public class Roles implements Serializable {
     /**
      * 通行证id
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      * 姓名

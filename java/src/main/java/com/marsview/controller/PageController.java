@@ -121,7 +121,7 @@ public class PageController extends BasicController {
     if (page_id == null) {
       return getErrorResponse("参数错误");
     }
-    queryWrapper.eq("page_id", page_id);
+    queryWrapper.eq("id", page_id);
     return getResponse(pagesService.getOne(queryWrapper));
   }
 

@@ -39,7 +39,7 @@ public class PagesPublish implements Serializable {
     /**
      * 通行证id
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      * 姓名
@@ -54,7 +54,7 @@ public class PagesPublish implements Serializable {
     /**
      * 状态：stg、pre、 prd
      */
-    private Object env;
+    private String env;
 
     /**
      * 更新时间

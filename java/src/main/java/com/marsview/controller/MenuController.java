@@ -50,6 +50,7 @@ public class MenuController extends BasicController {
         Long pageId = 0L;
         if (menuDto.getType() != 2 && menuDto.getIs_create() == 1) {
             Pages pages = new Pages();
+            pages.setName(menuDto.getName());
             pages.setUserId(user.getId());
             pages.setUserName(user.getUserName());
             pages.setIsPublic(1);

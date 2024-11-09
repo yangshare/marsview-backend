@@ -1,6 +1,18 @@
 package com.marsview.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.marsview.controller.basic.BasicController;
+import com.marsview.controller.basic.Builder;
+import com.marsview.controller.basic.ResultResponse;
+import com.marsview.domain.ImgCloud;
+import com.marsview.domain.Pages;
+import com.marsview.domain.Users;
+import com.marsview.service.ImgcloudService;
+import com.marsview.util.SessionUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,11 +23,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cloud")
-public class ImgCloudController {
+public class ImgCloudController extends BasicController {
 
+    @Autowired
+    private ImgcloudService imgcloudService;
 
-
-//  @PostMapping("/upload/files")
+    //  @PostMapping("/upload/files")
 //  public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 //    try {
 //      Map<String, Object> tokenData = util.decodeToken(request);
@@ -49,29 +62,27 @@ public class ImgCloudController {
 //    }
 //  }
 //
-//  @GetMapping("/list")
-//  public ResponseEntity<Map<String, Object>> getFileList(HttpServletRequest request) {
-//    Map<String, Object> tokenData = util.decodeToken(request);
-//    Long userId = (Long) tokenData.get("userId");
-//
-//    int pageNum = Integer.parseInt(request.getParameter("pageNum"));
-//    int pageSize = Integer.parseInt(request.getParameter("pageSize"));
-//
-//    Map<String, Object> result = imgCloudMapper.getFileList(userId, pageNum, pageSize);
-//    return ResponseEntity.ok(result);
-//  }
-//
-//  @PostMapping("/delete")
-//  public ResponseEntity<Void> deleteFile(@RequestBody Map<String, Long> requestBody, HttpServletRequest request) {
-//    Map<String, Object> tokenData = util.decodeToken(request);
-//    Long userId = (Long) tokenData.get("userId");
-//    Long id = requestBody.get("id");
-//
-//    if (id == null) {
-//      return ResponseEntity.badRequest().build();
-//    }
-//
-//    imgCloudMapper.deleteFile(id, userId);
-//    return ResponseEntity.ok().build();
-//  }
+    @GetMapping("/list")
+    public ResultResponse list(HttpServletRequest request, int pageNum, int pageSize) {
+        Users users = SessionUtils.getUser(request);
+
+        QueryWrapper<ImgCloud> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", users.getId());
+
+        Page<ImgCloud> page = new Page<>(pageNum, pageSize);
+        IPage<ImgCloud> pageInfo = imgcloudService.page(page, queryWrapper);
+        return Builder.of(ResultResponse::new)
+                .with(ResultResponse::setData, Map.of(
+                        "list", pageInfo.getRecords(),
+                        "pageNum", pageInfo.getCurrent(),
+                        "pageSize", pageInfo.getSize(),
+                        "total", pageInfo.getTotal()
+                ))
+                .build();
+    }
+
+    @PostMapping("/delete")
+    public ResultResponse delete(@RequestBody ImgCloud imgCloud) {
+        return getUpdateResponse(imgcloudService.removeById(imgCloud.getId()), "删除失败");
+    }
 }
