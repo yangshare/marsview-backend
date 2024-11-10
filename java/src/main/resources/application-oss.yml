@@ -1,0 +1,60 @@
+simple-fs:
+  local:
+    local-file-path: 本地路径
+    local-url: 本机访问地址
+  oss:
+    access-key: 阿里云OSS授权AK
+    secret-key: 阿里云OSS授权SK
+    endpoint: 阿里云OSS地域
+    domain-url: 阿里云OSS访问地址
+    bucket-name: 阿里云OSS空间名称
+  fast:
+    user-name: FASTDFS用户名
+    pass-word: FASTDFS密码
+    server-url: FASTDFS上传地址
+    domain-url: FASTDFS访问地址
+  huawei:
+    access-key: 华为对象存储授权AK
+    secret-key: 华为对象存储授权SK
+    endpoint: 华为对象存储地域
+    domain-url: 华为对象存储访问地址
+    bucket-name: 华为对象存储空间名称
+  bos:
+    access-key: 百度bos授权AK
+    secret-key: 百度bos授权SK
+    endpoint: 百度bos地域
+    domain-url: 百度bos访问地址
+    bucket-name: 百度bos空间名称
+  qcloud:
+    access-key: 腾讯云cos授权AK
+    secret-key: 腾讯云cos授权SK
+    endpoint: 腾讯云cos地域
+    domain-url: 腾讯云cos访问地址
+    bucket-name: 腾讯云cos空间名称
+    region: 腾讯云cos地域
+  qiniu:
+    access-key: 七牛云OSS授权AK
+    secret-key: 七牛云OSS授权SK
+    domain-url: 七牛云OSS访问地址
+    bucket-name: 七牛云OSS空间名称
+    region: 七牛云OSS地域，参考：https://developer.qiniu.com/kodo/1671/region-endpoint-fq
+  upai:
+    user-name: 又拍云用户名
+    pass-word: 又拍云密码
+    domain-url: 又拍云访问地址
+    bucket-name: 又拍云空间名称
+  smms:
+    user-name: smms用户名
+    token: smms-Token
+    pass-word: smms密码
+  github:
+    repository: github仓库
+    user: github用户名
+    token: githubToken
+  aws:
+    access-key: AWS授权AK
+    secret-key: AWS授权SK
+    endpoint: AWS地域
+    bucket-name: AWS空间名称
+    region: AWS地域
+    domain-url: AWS访问地址

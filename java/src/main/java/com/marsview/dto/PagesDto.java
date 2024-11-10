@@ -1,6 +1,7 @@
 package com.marsview.dto;
 
 import com.marsview.domain.Pages;
+import lombok.Data;
 
 /**
  * <p>类说明</p>
@@ -8,6 +9,7 @@ import com.marsview.domain.Pages;
  * @author yangshare simayifeng@gmail.com
  * @createTime: 2024/9/27 17:11
  */
+@Data
 public class PagesDto extends Pages {
 
     /**
@@ -30,35 +32,19 @@ public class PagesDto extends Pages {
      */
     private Long page_id;
 
-    public Integer getType() {
-        return type;
-    }
+    /**
+     * 页面数据
+     */
+    private String page_data;
 
-    public void setType(Integer type) {
-        this.type = type;
-    }
+    /**
+     * 是否可编辑
+     */
+    private Integer is_edit;
 
-    public String getEnv() {
-        return env;
-    }
+    /**
+     * 是否公开
+     */
+    private Integer is_public;
 
-    public void setEnv(String env) {
-        this.env = env;
-    }
-
-    public Long getLast_publish_id() {
-        return last_publish_id;
-    }
-
-    public void setLast_publish_id(Long last_publish_id) {
-        this.last_publish_id = last_publish_id;
-    }
-
-    public Long getPage_id() {
-        return page_id;
-    }
-
-    public void setPage_id(Long page_id) {
-        this.page_id = page_id;
-    }
 }

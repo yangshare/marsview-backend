@@ -1,5 +1,7 @@
 #服务名
 spring:
+  profiles:
+    active: default,oss
   application:
     name: marsview4j
   #邮箱配置
@@ -43,6 +45,3 @@ mybatis-plus:
   pagination:
     enable: true
 
-#打印sql日志
-logging:
-  config: classpath:logback.xml

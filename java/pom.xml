@@ -13,7 +13,6 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <properties>
-    <start-class>com.marsview.LowcodeApplication</start-class>
     <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -74,34 +73,6 @@
       <version>2.0.41</version>
     </dependency>
 
-    <!--通用Mapper-->
-    <!--<dependency>
-      <groupId>tk.mybatis</groupId>
-      <artifactId>mapper</artifactId>
-      <version>4.2.3</version>
-    </dependency>-->
-
-
-    <!--分页插件 start-->
-    <!--<dependency>
-      <groupId>com.github.pagehelper</groupId>
-      <artifactId>pagehelper</artifactId>
-      <version>6.0.0</version>
-    </dependency>-->
-
-    <!--<dependency>
-      <groupId>com.github.pagehelper</groupId>
-      <artifactId>pagehelper-spring-boot-starter</artifactId>
-      <version>2.0.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.mybatis.spring.boot</groupId>
-          <artifactId>mybatis-spring-boot-starter</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>-->
-    <!--分页插件 end-->
-
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -112,6 +83,42 @@
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- https://github.com/shengdingbox/simpleFS -->
+    <dependency>
+      <groupId>com.zhouzifei</groupId>
+      <artifactId>simpleFS</artifactId>
+      <version>1.0.4.RELEASES</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>aliyun-java-sdk-core</artifactId>
+          <groupId>com.aliyun</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>bcprov-jdk15on</artifactId>
+          <groupId>org.bouncycastle</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>fastjson</artifactId>
+          <groupId>com.alibaba</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jaxb-api</artifactId>
+          <groupId>javax.xml.bind</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>marsview4j</finalName>
@@ -127,4 +134,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>
