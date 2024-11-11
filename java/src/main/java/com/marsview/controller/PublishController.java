@@ -20,6 +20,7 @@ import com.marsview.mapper.PagesPublishMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,15 +54,17 @@ public class PublishController extends BasicController {
      * @param publish
      */
     @PostMapping("create")
-    public ResultResponse create(HttpServletRequest request, HttpServletResponse response, @RequestBody PagesPublish publish) {
+    public ResultResponse create(HttpServletRequest request, HttpServletResponse response, @RequestBody PagesPublishDto publishDto) {
         Users users = SessionUtils.getUser(request);
-        Pages pages = pagesService.getById(publish.getPageId());
+        Pages pages = pagesService.getById(publishDto.getPage_id());
         if (pages == null) {
             return getErrorResponse("页面不存在");
         } else {
             QueryWrapper<PagesPublish> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("page_id", publish.getPageId());
+            queryWrapper.eq("page_id", publishDto.getPage_id());
             long count = pagesPublishService.count(queryWrapper);
+            PagesPublish publish = new PagesPublish();
+            publish.setPageId(pages.getId());
             publish.setPageName(pages.getName());
             publish.setUserId(users.getId());
             publish.setUserName(users.getUserName());
@@ -73,13 +76,14 @@ public class PublishController extends BasicController {
             if (result) {
                 //更新页面信息
                 Pages pagesNew = new Pages();
-                pagesNew.setId(pages.getId());
+                BeanUtils.copyProperties(pages, pagesNew);
                 pagesNew.setStgPublishId(StringUtils.equals("stg", publish.getEnv()) ? publish.getId() : null);
                 pagesNew.setStgState(StringUtils.equals("stg", publish.getEnv()) ? 3 : null);
                 pagesNew.setPrePublishId(StringUtils.equals("pre", publish.getEnv()) ? publish.getId() : null);
                 pagesNew.setPreState(StringUtils.equals("pre", publish.getEnv()) ? 3 : null);
                 pagesNew.setPrdPublishId(StringUtils.equals("prd", publish.getEnv()) ? publish.getId() : null);
                 pagesNew.setPrdState(StringUtils.equals("prd", publish.getEnv()) ? 3 : null);
+                pagesNew.setPreviewImg(publishDto.getPreview_img());
                 pagesService.updateById(pagesNew);
 
             }

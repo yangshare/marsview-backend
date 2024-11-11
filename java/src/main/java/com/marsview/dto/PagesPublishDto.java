@@ -20,5 +20,6 @@ public class PagesPublishDto extends PagesPublish {
     private Integer pageSize;//每页数量
     private Long page_id;//页面id
     private String publish_user_id;//发布人名称 TODO
+    private String preview_img;//预览图
 
 }

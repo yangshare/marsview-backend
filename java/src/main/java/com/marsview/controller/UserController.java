@@ -101,7 +101,7 @@ public class UserController extends BasicController {
       return getResponse();
     }catch (MailException e){
       e.printStackTrace();
-      return getErrorResponse("邮件发送失败,请联系管理员！");
+      return getErrorResponse("系统未配置邮箱发送服务,请联系管理员！");
     }
 
   }

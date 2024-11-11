@@ -46,5 +46,9 @@ public class PagesDto extends Pages {
      * 是否公开
      */
     private Integer is_public;
+    /**
+     * 预览图片
+     */
+    private String preview_img;
 
 }
