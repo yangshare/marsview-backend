@@ -59,18 +59,16 @@ public class OssTemplateTest {
         String domainUrl = qiniuFileProperties.getDomainUrl();
         String accessKey = qiniuFileProperties.getAccessKey();
         String secretKey = qiniuFileProperties.getSecretKey();
-        String endpoint = "";
         String region = qiniuFileProperties.getRegion();
         String bucketName = qiniuFileProperties.getBucketName();
         String storageType = StorageTypeConst.QINIUYUN.getStorageType();
-        //(simpleFsProperties,progressListener,domainUrl,accessKey,secretKey,endpoint,region,bucketName,storageType);
+
         FileUploader uploader = FileUploader.builder()
                 .simpleFsProperties(simpleFsProperties)
                 .progressListener(progressListener)
                 .domainUrl(domainUrl)
                 .accessKey(accessKey)
                 .secretKey(secretKey)
-                .endpoint(endpoint)
                 .region(region)
                 .bucketName(bucketName)
                 .storageType(storageType)
