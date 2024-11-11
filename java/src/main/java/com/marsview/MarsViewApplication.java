@@ -1,5 +1,6 @@
 package com.marsview;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -9,7 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * <p>类说明</p>
@@ -22,7 +22,8 @@ import java.net.UnknownHostException;
 @Slf4j
 public class MarsViewApplication {
 
-    public static void main(String[] args) throws UnknownHostException {
+    @SneakyThrows
+    public static void main(String[] args) {
         ConfigurableApplicationContext application = SpringApplication.run(MarsViewApplication.class, args);
         Environment env = application.getEnvironment();
         String ip = InetAddress.getLocalHost().getHostAddress();

@@ -83,11 +83,11 @@
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!-- https://github.com/shengdingbox/simpleFS -->
+    <!-- https://github.com/yangshare/simpleFS -->
     <dependency>
-      <groupId>com.zhouzifei</groupId>
+      <groupId>io.github.yangshare</groupId>
       <artifactId>simpleFS</artifactId>
-      <version>1.0.4.RELEASES</version>
+      <version>1.0.5</version>
       <exclusions>
         <exclusion>
           <artifactId>aliyun-java-sdk-core</artifactId>

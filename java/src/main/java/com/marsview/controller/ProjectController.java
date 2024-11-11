@@ -119,4 +119,13 @@ public class ProjectController extends BasicController {
     projects.setUpdatedAt(new Date());
     return getUpdateResponse(projectsService.updateById(projects), "保存失败");
   }
+
+  /**
+   * 删除项目
+   * @param projects
+   */
+  @PostMapping("delete")
+  public ResultResponse delete(@RequestBody Projects projects) {
+    return getUpdateResponse(projectsService.removeById(projects.getId()), "删除失败");
+  }
 }
