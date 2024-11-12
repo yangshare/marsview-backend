@@ -19,9 +19,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,9 +82,14 @@ public class PageController extends BasicController {
 
         Page<Pages> page = new Page<>(pageNum, pageSize);
         IPage<Pages> pageInfo = pagesService.page(page, queryWrapper);
+        List<Pages> records = pageInfo.getRecords();
+        List<PagesDto> pagesDtos = new ArrayList<>(records.size());
+        for (Pages record : records) {
+            pagesDtos.add(new PagesDto(record));
+        }
         return Builder.of(ResultResponse::new)
                 .with(ResultResponse::setData, Map.of(
-                        "list", pageInfo.getRecords(),
+                        "list", pagesDtos,
                         "pageNum", pageInfo.getCurrent(),
                         "pageSize", pageInfo.getSize(),
                         "total", pageInfo.getTotal()
@@ -123,7 +131,11 @@ public class PageController extends BasicController {
             return getErrorResponse("参数错误");
         }
         queryWrapper.eq("id", page_id);
-        return getResponse(pagesService.getOne(queryWrapper));
+        Pages pages = pagesService.getOne(queryWrapper);
+        if (pages == null) {
+            return getErrorResponse("页面不存在");
+        }
+        return getResponse(new PagesDto(pages));
     }
 
     /**
@@ -161,4 +173,33 @@ public class PageController extends BasicController {
                         .with(Pages::setPrdPublishId, "prd".equals(dto.getEnv()) ? dto.getLast_publish_id() : null)
                         .with(Pages::setPrdState, "prd".equals(dto.getEnv()) ? 3 : null).build()) ? 1 : 0, "操作失败");
     }
+
+    /**
+     * 获取页面模板列表
+     */
+    @GetMapping("getPageTemplateList")
+    public ResultResponse getPageTemplateList(int pageNum, int pageSize, String keyword) {
+        QueryWrapper<Pages> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("is_public", 3);
+        if (StringUtils.hasText(keyword)){
+            queryWrapper.like("name", keyword);
+        }
+
+        Page<Pages> page = new Page<>(pageNum, pageSize);
+        IPage<Pages> pageInfo = pagesService.page(page, queryWrapper);
+        List<Pages> records = pageInfo.getRecords();
+        List<PagesDto> pagesDtos = new ArrayList<>(records.size());
+        for (Pages record : records) {
+            pagesDtos.add(new PagesDto(record));
+        }
+        return Builder.of(ResultResponse::new)
+                .with(ResultResponse::setData, Map.of(
+                        "list", pagesDtos,
+                        "pageNum", pageInfo.getCurrent(),
+                        "pageSize", pageInfo.getSize(),
+                        "total", pageInfo.getTotal()
+                ))
+                .build();
+    }
+
 }

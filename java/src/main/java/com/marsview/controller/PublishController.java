@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,11 +52,10 @@ public class PublishController extends BasicController {
      * 创建发布
      *
      * @param request
-     * @param response
-     * @param publish
+     * @param publishDto
      */
     @PostMapping("create")
-    public ResultResponse create(HttpServletRequest request, HttpServletResponse response, @RequestBody PagesPublishDto publishDto) {
+    public ResultResponse create(HttpServletRequest request, @RequestBody PagesPublishDto publishDto) {
         Users users = SessionUtils.getUser(request);
         Pages pages = pagesService.getById(publishDto.getPage_id());
         if (pages == null) {
@@ -77,12 +78,12 @@ public class PublishController extends BasicController {
                 //更新页面信息
                 Pages pagesNew = new Pages();
                 BeanUtils.copyProperties(pages, pagesNew);
-                pagesNew.setStgPublishId(StringUtils.equals("stg", publish.getEnv()) ? publish.getId() : null);
-                pagesNew.setStgState(StringUtils.equals("stg", publish.getEnv()) ? 3 : null);
-                pagesNew.setPrePublishId(StringUtils.equals("pre", publish.getEnv()) ? publish.getId() : null);
-                pagesNew.setPreState(StringUtils.equals("pre", publish.getEnv()) ? 3 : null);
-                pagesNew.setPrdPublishId(StringUtils.equals("prd", publish.getEnv()) ? publish.getId() : null);
-                pagesNew.setPrdState(StringUtils.equals("prd", publish.getEnv()) ? 3 : null);
+                pagesNew.setStgPublishId(StringUtils.equals("stg", publishDto.getEnv()) ? publish.getId() : null);
+                pagesNew.setStgState(StringUtils.equals("stg", publishDto.getEnv()) ? 3 : null);
+                pagesNew.setPrePublishId(StringUtils.equals("pre", publishDto.getEnv()) ? publish.getId() : null);
+                pagesNew.setPreState(StringUtils.equals("pre", publishDto.getEnv()) ? 3 : null);
+                pagesNew.setPrdPublishId(StringUtils.equals("prd", publishDto.getEnv()) ? publish.getId() : null);
+                pagesNew.setPrdState(StringUtils.equals("prd", publishDto.getEnv()) ? 3 : null);
                 pagesNew.setPreviewImg(publishDto.getPreview_img());
                 pagesService.updateById(pagesNew);
 
@@ -119,9 +120,14 @@ public class PublishController extends BasicController {
 
         Page<PagesPublish> page = new Page<>(publishDto.getPageNum(), publishDto.getPageSize());
         IPage<PagesPublish> pageInfo = pagesPublishService.page(page, queryWrapper);
+        List<PagesPublish> records = pageInfo.getRecords();
+        List<PagesPublishDto> pagesPublishDtos = new ArrayList<>(records.size());
+        for (PagesPublish record : records) {
+            pagesPublishDtos.add(new PagesPublishDto(record));
+        }
         return Builder.of(ResultResponse::new)
                 .with(ResultResponse::setData, Map.of(
-                        "list", pageInfo.getRecords(),
+                        "list", pagesPublishDtos,
                         "pageNum", pageInfo.getCurrent(),
                         "pageSize", pageInfo.getSize(),
                         "total", pageInfo.getTotal()
