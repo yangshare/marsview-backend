@@ -87,7 +87,7 @@
     <dependency>
       <groupId>io.github.yangshare</groupId>
       <artifactId>simpleFS</artifactId>
-      <version>1.0.5</version>
+      <version>1.0.6</version>
       <exclusions>
         <exclusion>
           <artifactId>aliyun-java-sdk-core</artifactId>
