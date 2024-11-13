@@ -110,6 +110,8 @@
           <groupId>javax.xml.bind</groupId>
         </exclusion>
       </exclusions>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/simpleFS-1.0.6.jar</systemPath>
     </dependency>
 
     <dependency>
