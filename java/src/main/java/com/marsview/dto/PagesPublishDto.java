@@ -21,9 +21,7 @@ public class PagesPublishDto extends PagesPublish {
     private Date end;//创建时间末
     private Integer pageNum;//页码
     private Integer pageSize;//每页数量
-    private Long page_id;//页面id
-    private String publish_user_id;//发布人名称 TODO
-    private String preview_img;//预览图
+    private String previewImg;//预览图
 
 
     /**
@@ -33,8 +31,6 @@ public class PagesPublishDto extends PagesPublish {
      */
     public PagesPublishDto(PagesPublish pagesPublish) {
         BeanUtils.copyProperties(pagesPublish, this);
-        this.page_id = pagesPublish.getPageId();
-        this.publish_user_id = pagesPublish.getUserName();
 
     }
 
@@ -46,8 +42,6 @@ public class PagesPublishDto extends PagesPublish {
     public PagesPublish toBean() {
         PagesPublish pagesPublish = new PagesPublish();
         BeanUtils.copyProperties(this, pagesPublish);
-        pagesPublish.setPageId(this.page_id);
-        pagesPublish.setUserName(this.publish_user_id);
 
         return pagesPublish;
     }

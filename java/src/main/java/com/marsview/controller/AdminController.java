@@ -12,15 +12,15 @@ import com.marsview.service.PagesPublishService;
 import com.marsview.service.PagesService;
 import com.marsview.service.ProjectsService;
 import com.marsview.util.SessionUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -32,6 +32,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("api/admin")
+@Tag(name = "管理员管理")
 public class AdminController extends BasicController {
 
   private static final Logger LOGGER = LogManager.getLogger(AdminController.class);
@@ -48,26 +49,33 @@ public class AdminController extends BasicController {
   @Autowired
   private PagesPublishService pagesPublishService;
 
-
   /**
    * 获取项目配置
    *
-   * @param response
-   * @param project_id
+   * @param response  HTTP 响应对象
+   * @param project_id 项目 ID
+   * @return 项目配置响应
    */
   @GetMapping("getProjectConfig")
-  public ResultResponse getProjectConfig(HttpServletResponse response, Long project_id) {
+  @Operation(summary = "获取项目配置")
+  public ResultResponse getProjectConfig(
+          HttpServletResponse response,
+          @Parameter(description = "项目 ID") @RequestParam Long project_id) {
     return getResponse(projectsService.getById(project_id));
   }
 
   /**
    * 获取项目对应的菜单
    *
-   * @param response
-   * @param project_id
+   * @param response  HTTP 响应对象
+   * @param project_id 项目 ID
+   * @return 菜单列表响应
    */
   @GetMapping("menu/list/{project_id}")
-  public ResultResponse menuList(HttpServletResponse response, @PathVariable Long project_id) {
+  @Operation(summary = "获取项目对应的菜单")
+  public ResultResponse menuList(
+          HttpServletResponse response,
+          @Parameter(description = "项目 ID") @PathVariable Long project_id) {
 
     QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("project_id", project_id);
@@ -77,12 +85,19 @@ public class AdminController extends BasicController {
   /**
    * 获取页面详情
    *
-   * @param response
-   * @param env
-   * @param page_id
+   * @param request  HTTP 请求对象
+   * @param response HTTP 响应对象
+   * @param env      环境参数
+   * @param page_id  页面 ID
+   * @return 页面详情响应
    */
   @GetMapping("page/detail/{env}/{page_id}")
-  public ResultResponse pageDetail(HttpServletRequest request, HttpServletResponse response, @PathVariable(name = "env") String env, @PathVariable(name = "page_id") Long page_id) {
+  @Operation(summary = "获取页面详情")
+  public ResultResponse pageDetail(
+          HttpServletRequest request,
+          HttpServletResponse response,
+          @Parameter(description = "环境参数") @PathVariable(name = "env") String env,
+          @Parameter(description = "页面 ID") @PathVariable(name = "page_id") Long page_id) {
     LOGGER.info("请求参数env[{}],page_id[{}]", env, page_id);
     Users users = SessionUtils.getUser(request);
 
@@ -103,7 +118,6 @@ public class AdminController extends BasicController {
         break;
       default:
         return getErrorResponse("环境参数错误");
-
     }
 
     QueryWrapper<PagesPublish> queryWrapper = new QueryWrapper<>();
@@ -117,12 +131,19 @@ public class AdminController extends BasicController {
   /**
    * 获取项目列表
    *
-   * @param response
-   * @param pageNum
-   * @param pageSize
+   * @param request  HTTP 请求对象
+   * @param response HTTP 响应对象
+   * @param pageNum  当前页码
+   * @param pageSize 每页大小
+   * @return 项目列表响应
    */
   @GetMapping("project/list")
-  public ResultResponse projectList(HttpServletRequest request, HttpServletResponse response, int pageNum, int pageSize) {
+  @Operation(summary = "获取项目列表")
+  public ResultResponse projectList(
+          HttpServletRequest request,
+          HttpServletResponse response,
+          @Parameter(description = "当前页码") @RequestParam int pageNum,
+          @Parameter(description = "每页大小") @RequestParam int pageSize) {
     Users users = SessionUtils.getUser(request);
     QueryWrapper<Projects> queryWrapper = new QueryWrapper<>();
     queryWrapper.eq("user_id", users.getId());
@@ -130,10 +151,10 @@ public class AdminController extends BasicController {
     Page<Projects> page = new Page<>(pageNum, pageSize);
     IPage<Projects> pageInfo = projectsService.page(page, queryWrapper);
     return Builder.of(ResultResponse::new).with(ResultResponse::setData,
-      Map.of("list", pageInfo.getRecords(),
-        "pageNum", pageInfo.getCurrent(),
-        "pageSize", pageInfo.getSize(), // 注意这里应该是 getSize() 而不是 getPages()
-        "total", pageInfo.getTotal())
+            Map.of("list", pageInfo.getRecords(),
+                    "pageNum", pageInfo.getCurrent(),
+                    "pageSize", pageInfo.getSize(), // 注意这里应该是 getSize() 而不是 getPages()
+                    "total", pageInfo.getTotal())
     ).build();
   }
 }

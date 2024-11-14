@@ -20,6 +20,9 @@ import com.marsview.mapper.PagesPublishMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,6 +41,7 @@ import java.util.Map;
  * @author yangshare simayifeng@gmail.com
  * createTime: 2024/9/28 18:59
  */
+@Tag(name = "发布管理")
 @RestController
 @RequestMapping("api/publish")
 public class PublishController extends BasicController {
@@ -48,21 +52,16 @@ public class PublishController extends BasicController {
     @Autowired
     private PagesService pagesService;
 
-    /**
-     * 创建发布
-     *
-     * @param request
-     * @param publishDto
-     */
+    @Operation(summary = "创建发布")
     @PostMapping("create")
-    public ResultResponse create(HttpServletRequest request, @RequestBody PagesPublishDto publishDto) {
+    public ResultResponse create(HttpServletRequest request, @Parameter(description = "发布信息") @RequestBody PagesPublishDto publishDto) {
         Users users = SessionUtils.getUser(request);
-        Pages pages = pagesService.getById(publishDto.getPage_id());
+        Pages pages = pagesService.getById(publishDto.getPageId());
         if (pages == null) {
             return getErrorResponse("页面不存在");
         } else {
             QueryWrapper<PagesPublish> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("page_id", publishDto.getPage_id());
+            queryWrapper.eq("page_id", publishDto.getPageId());
             long count = pagesPublishService.count(queryWrapper);
             PagesPublish publish = new PagesPublish();
             publish.setPageId(pages.getId());
@@ -75,7 +74,7 @@ public class PublishController extends BasicController {
             publish.setPageData(pages.getPageData());
             boolean result = pagesPublishService.save(publish);
             if (result) {
-                //更新页面信息
+                // 更新页面信息
                 Pages pagesNew = new Pages();
                 BeanUtils.copyProperties(pages, pagesNew);
                 pagesNew.setStgPublishId(StringUtils.equals("stg", publishDto.getEnv()) ? publish.getId() : null);
@@ -84,23 +83,20 @@ public class PublishController extends BasicController {
                 pagesNew.setPreState(StringUtils.equals("pre", publishDto.getEnv()) ? 3 : null);
                 pagesNew.setPrdPublishId(StringUtils.equals("prd", publishDto.getEnv()) ? publish.getId() : null);
                 pagesNew.setPrdState(StringUtils.equals("prd", publishDto.getEnv()) ? 3 : null);
-                pagesNew.setPreviewImg(publishDto.getPreview_img());
+                pagesNew.setPreviewImg(publishDto.getPreviewImg());
                 pagesService.updateById(pagesNew);
-
             }
             return getUpdateResponse(result, "发布失败");
         }
     }
 
-    /**
-     * 分页获取发布记录
-     */
+    @Operation(summary = "分页获取发布记录")
     @PostMapping("list")
-    public ResultResponse list(@RequestBody PagesPublishDto publishDto) {
+    public ResultResponse list(@Parameter(description = "发布信息") @RequestBody PagesPublishDto publishDto) {
 
-        String env = publishDto.getEnv();// 环境
-        Long page_id = publishDto.getPage_id();// 页面ID
-        String userName = publishDto.getPublish_user_id();// 发布人名称 TODO
+        String env = publishDto.getEnv(); // 环境
+        Long page_id = publishDto.getPageId(); // 页面ID
+        String userName = publishDto.getUserName(); // 发布人名称 TODO
 
         if (page_id == null || page_id == 0) {
             return getErrorResponse("页面ID不能为空");

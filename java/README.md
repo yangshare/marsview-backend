@@ -270,7 +270,7 @@ docker run -d -p 9001:9001 -v /宿主机路径/conf:/app/conf marsview4j:latest
 ## 代码规范
 只有两条规则
 - 代码尽量生成器，不要手写。[代码生成](https://baomidou.com/guides/mybatis-x/#%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90)
-- 手写代码请遵照[《阿里巴巴Java开发手册（终极版）》](https://developer.aliyun.com/ebook/386/read)
+- 手写代码请遵照[《阿里巴巴Java开发手册（终极版）》](https://developer.aliyun.com/ebook/386/read)，接口添加文档注解[Knife4j](https://doc.xiaominfo.com/)
 
 ## pr规范
 不用研究pr规范（发起pr自然就有模板），提交pr之前先fork项目，然后在自己的仓库里`Open a pull request`

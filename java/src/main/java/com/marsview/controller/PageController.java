@@ -17,10 +17,14 @@ import com.marsview.util.SessionUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +39,8 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("api/page")
+@Slf4j
+@Tag(name = "页面管理")
 public class PageController extends BasicController {
 
     @Autowired
@@ -54,7 +60,11 @@ public class PageController extends BasicController {
      * @param pages
      */
     @PostMapping("create")
-    public ResultResponse create(HttpServletRequest request, HttpServletResponse response, @RequestBody Pages pages) {
+    @Operation(summary = "创建页面")
+    public ResultResponse create(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @Parameter(description = "页面信息") @RequestBody Pages pages) {
         Users users = SessionUtils.getUser(request);
         pages.setUserId(users.getId());
         pages.setUserName(users.getUserName());
@@ -72,7 +82,13 @@ public class PageController extends BasicController {
      * @param type
      */
     @GetMapping("list")
-    public ResultResponse list(HttpServletRequest request, HttpServletResponse response, int pageNum, int pageSize, Integer type) {
+    @Operation(summary = "获取页面列表")
+    public ResultResponse list(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @Parameter(description = "页码") int pageNum,
+            @Parameter(description = "每页大小") int pageSize,
+            @Parameter(description = "类型") Integer type) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Pages> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", users.getId());
@@ -100,11 +116,16 @@ public class PageController extends BasicController {
     /**
      * 获取页面角色列表
      *
+     * @param request
      * @param response
      * @param menu
      */
     @PostMapping("/role/list")
-    public ResultResponse list(HttpServletRequest request, HttpServletResponse response, @RequestBody Menu menu) {
+    @Operation(summary = "获取页面角色列表")
+    public ResultResponse list(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @Parameter(description = "菜单信息") @RequestBody Menu menu) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", users.getId());
@@ -118,12 +139,16 @@ public class PageController extends BasicController {
     /**
      * 获取页面信息
      *
+     * @param request
      * @param response
      * @param page_id
      */
     @GetMapping("/detail/{page_id}")
-    public ResultResponse detail(HttpServletRequest request, HttpServletResponse response,
-                                 @PathVariable("page_id") Long page_id) {
+    @Operation(summary = "获取页面信息")
+    public ResultResponse detail(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @Parameter(description = "页面ID") @PathVariable("page_id") Long page_id) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Pages> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", users.getId());
@@ -145,13 +170,11 @@ public class PageController extends BasicController {
      * @param pagesDto
      */
     @PostMapping("update")
-    public ResultResponse update(HttpServletResponse response, @RequestBody PagesDto pagesDto) {
-        Pages pages = new Pages();
-        BeanUtils.copyProperties(pagesDto, pages);
+    @Operation(summary = "更新页面信息")
+    public ResultResponse update(
+            HttpServletResponse response,
+            @Parameter(description = "页面信息") @RequestBody Pages pages) {
         pages.setUpdatedAt(new Date());
-        pages.setIsEdit(pagesDto.getIs_edit());
-        pages.setIsPublic(pagesDto.getIs_public());
-        pages.setPageData(pagesDto.getPage_data());
         return getUpdateResponse(pagesService.updateById(pages), "保存失败");
     }
 
@@ -162,15 +185,18 @@ public class PageController extends BasicController {
      * @param dto
      */
     @PostMapping("rollback")
-    public ResultResponse rollback(HttpServletResponse response, @RequestBody PagesDto dto) {
+    @Operation(summary = "页面回滚")
+    public ResultResponse rollback(
+            HttpServletResponse response,
+            @Parameter(description = "回滚信息") @RequestBody PagesDto dto) {
         return getUpdateResponse(
                 pagesService.updateById(Builder.of(Pages::new)
-                        .with(Pages::setId, dto.getPage_id())
-                        .with(Pages::setStgPublishId, "stg".equals(dto.getEnv()) ? dto.getLast_publish_id() : null)
+                        .with(Pages::setId, dto.getPageId())
+                        .with(Pages::setStgPublishId, "stg".equals(dto.getEnv()) ? dto.getLastPublishId() : null)
                         .with(Pages::setStgState, "stg".equals(dto.getEnv()) ? 3 : null)
-                        .with(Pages::setPrePublishId, "pre".equals(dto.getEnv()) ? dto.getLast_publish_id() : null)
+                        .with(Pages::setPrePublishId, "pre".equals(dto.getEnv()) ? dto.getLastPublishId() : null)
                         .with(Pages::setPreState, "pre".equals(dto.getEnv()) ? 3 : null)
-                        .with(Pages::setPrdPublishId, "prd".equals(dto.getEnv()) ? dto.getLast_publish_id() : null)
+                        .with(Pages::setPrdPublishId, "prd".equals(dto.getEnv()) ? dto.getLastPublishId() : null)
                         .with(Pages::setPrdState, "prd".equals(dto.getEnv()) ? 3 : null).build()) ? 1 : 0, "操作失败");
     }
 
@@ -178,10 +204,14 @@ public class PageController extends BasicController {
      * 获取页面模板列表
      */
     @GetMapping("getPageTemplateList")
-    public ResultResponse getPageTemplateList(int pageNum, int pageSize, String keyword) {
+    @Operation(summary = "获取页面模板列表")
+    public ResultResponse getPageTemplateList(
+            @Parameter(description = "页码") @RequestParam int pageNum,
+            @Parameter(description = "每页大小") @RequestParam int pageSize,
+            @Parameter(description = "关键词") @RequestParam(required = false) String keyword) {
         QueryWrapper<Pages> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("is_public", 3);
-        if (StringUtils.hasText(keyword)){
+        if (StringUtils.hasText(keyword)) {
             queryWrapper.like("name", keyword);
         }
 
@@ -201,5 +231,4 @@ public class PageController extends BasicController {
                 ))
                 .build();
     }
-
 }

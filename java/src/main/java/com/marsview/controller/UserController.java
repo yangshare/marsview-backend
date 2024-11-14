@@ -13,6 +13,9 @@ import com.marsview.util.SessionUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.MailException;
@@ -30,10 +33,10 @@ import java.util.concurrent.TimeUnit;
  * @author yangshare simayifeng@gmail.com
  * @createTime: 2024/9/27 10:42
  */
+@Tag(name = "用户管理")
 @RestController
 @RequestMapping("api/user")
 public class UserController extends BasicController {
-
 
   @Resource
   private JavaMailSender mailSender;
@@ -44,14 +47,9 @@ public class UserController extends BasicController {
   @Autowired
   private UsersService userService;
 
-  /**
-   * 用户注册
-   *
-   * @param response
-   * @param dto
-   */
+  @Operation(summary = "用户注册")
   @PostMapping("regist")
-  public ResultResponse regist(HttpServletRequest request, HttpServletResponse response, @RequestBody UsersDto dto) {
+  public ResultResponse regist(HttpServletRequest request, HttpServletResponse response, @Parameter(description = "用户信息") @RequestBody UsersDto dto) {
     //从redis获取验证码
     String code = redisTemplate.opsForValue().get("lowcode.register.code" + dto.getUserName()) + "";
     //判断验证码是否正确
@@ -78,14 +76,9 @@ public class UserController extends BasicController {
     }
   }
 
-  /**
-   * 发送邮件
-   *
-   * @param response
-   * @param dto
-   */
+  @Operation(summary = "发送邮件")
   @PostMapping("sendEmail")
-  public ResultResponse sendEmail(HttpServletResponse response, @RequestBody UsersDto dto) {
+  public ResultResponse sendEmail(HttpServletResponse response, @Parameter(description = "用户信息") @RequestBody UsersDto dto) {
     SimpleMailMessage message = new SimpleMailMessage();
     int code = RandomUtil.getRandomServerPort();
     //放入缓存，保存3分钟
@@ -99,21 +92,15 @@ public class UserController extends BasicController {
     try {
       mailSender.send(message);
       return getResponse();
-    }catch (MailException e){
+    } catch (MailException e) {
       e.printStackTrace();
       return getErrorResponse("系统未配置邮箱发送服务,请联系管理员！");
     }
-
   }
 
-  /**
-   * 登录
-   *
-   * @param response
-   * @param dto
-   */
+  @Operation(summary = "登录")
   @PostMapping("login")
-  public ResultResponse login(HttpServletRequest request, HttpServletResponse response, @RequestBody UsersDto dto) {
+  public ResultResponse login(HttpServletRequest request, HttpServletResponse response, @Parameter(description = "用户信息") @RequestBody UsersDto dto) {
     QueryWrapper<Users> wrapper = new QueryWrapper<>();
     wrapper.eq("user_name", dto.getUserName());
     wrapper.eq("user_pwd", dto.getUserPwd());
@@ -131,11 +118,7 @@ public class UserController extends BasicController {
     }
   }
 
-  /**
-   * 登录
-   *
-   * @param response
-   */
+  @Operation(summary = "获取用户信息")
   @GetMapping("info")
   public ResultResponse info(HttpServletRequest request, HttpServletResponse response) {
     Users users = SessionUtils.getUser(request);
@@ -146,13 +129,9 @@ public class UserController extends BasicController {
       ));
   }
 
-  /**
-   * 登录
-   *
-   * @param response
-   */
+  @Operation(summary = "搜索用户")
   @PostMapping("search")
-  public ResultResponse search(HttpServletResponse response, @RequestBody Users users) {
+  public ResultResponse search(HttpServletResponse response, @Parameter(description = "用户信息") @RequestBody Users users) {
     QueryWrapper<Users> wrapper = new QueryWrapper<>();
     if (users.getId() != null) {
       wrapper.eq("id", users.getId());

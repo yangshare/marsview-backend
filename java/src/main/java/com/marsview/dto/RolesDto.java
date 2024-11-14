@@ -5,5 +5,4 @@ import lombok.Data;
 
 @Data
 public class RolesDto extends Roles {
-    private String project_id;
 }

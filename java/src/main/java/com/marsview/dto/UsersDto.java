@@ -1,6 +1,7 @@
 package com.marsview.dto;
 
 import com.marsview.domain.Users;
+import lombok.Data;
 
 /**
  * <p>说明</p>
@@ -8,6 +9,7 @@ import com.marsview.domain.Users;
  * @author yangshare simayifeng@gmail.com
  * createTime: 2024/9/29 07:48
  */
+@Data
 public class UsersDto extends Users {
 
     /**
@@ -30,35 +32,4 @@ public class UsersDto extends Users {
      */
     private String code;
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserPwd() {
-        return userPwd;
-    }
-
-    public void setUserPwd(String userPwd) {
-        this.userPwd = userPwd;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 }
