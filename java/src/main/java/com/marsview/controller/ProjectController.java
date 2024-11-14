@@ -13,6 +13,7 @@ import com.marsview.dto.ProjectsDto;
 import com.marsview.service.ProjectsService;
 import com.marsview.util.SessionUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,19 +41,26 @@ public class ProjectController extends BasicController {
     @Autowired
     private ProjectsService projectsService;
 
-
     /**
      * 分页获取项目列表
      *
-     * @param response
-     * @param type
-     * @param pageNum
-     * @param pageSize
-     * @param keyword
+     * @param request  HTTP 请求对象
+     * @param response HTTP 响应对象
+     * @param type     项目类型
+     * @param pageNum  当前页码
+     * @param pageSize 每页大小
+     * @param keyword  关键词
+     * @return 项目列表响应
      */
     @GetMapping("list")
     @Operation(summary = "分页获取项目列表")
-    public ResultResponse list(HttpServletRequest request, HttpServletResponse response, int type, int pageNum, int pageSize, String keyword) {
+    public ResultResponse list(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @Parameter(description = "项目类型") @RequestParam int type,
+            @Parameter(description = "当前页码") @RequestParam int pageNum,
+            @Parameter(description = "每页大小") @RequestParam int pageSize,
+            @Parameter(description = "关键词") @RequestParam String keyword) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Projects> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", users.getId());
@@ -89,12 +97,15 @@ public class ProjectController extends BasicController {
     /**
      * 创建项目
      *
-     * @param request
-     * @param projectsDto
+     * @param request    HTTP 请求对象
+     * @param projectsDto 项目 DTO 对象
+     * @return 创建项目响应
      */
     @PostMapping("create")
     @Operation(summary = "创建项目")
-    public ResultResponse create(HttpServletRequest request, @RequestBody JSONObject projectsDto) {
+    public ResultResponse create(
+            HttpServletRequest request,
+            @Parameter(description = "项目 DTO 对象") @RequestBody JSONObject projectsDto) {
         Users users = SessionUtils.getUser(request);
         Projects projects = new Projects();
         projects.setCreatedAt(new Date());
@@ -118,24 +129,32 @@ public class ProjectController extends BasicController {
     /**
      * 获取页面列表
      *
-     * @param response
-     * @param page_id
+     * @param request  HTTP 请求对象
+     * @param response HTTP 响应对象
+     * @param page_id  页面 ID
+     * @return 页面列表响应
      */
     @GetMapping("/detail/{page_id}")
     @Operation(summary = "获取页面列表")
-    public ResultResponse detail(HttpServletRequest request, HttpServletResponse response, @PathVariable("page_id") Long page_id) {
+    public ResultResponse detail(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @Parameter(description = "页面 ID") @PathVariable("page_id") Long page_id) {
         return getResponse(projectsService.getById(page_id));
     }
 
     /**
      * 更新项目
      *
-     * @param response
-     * @param projects
+     * @param response  HTTP 响应对象
+     * @param projects  项目对象
+     * @return 更新项目响应
      */
     @PostMapping("update")
     @Operation(summary = "更新项目")
-    public ResultResponse update(HttpServletResponse response, @RequestBody Projects projects) {
+    public ResultResponse update(
+            HttpServletResponse response,
+            @Parameter(description = "项目对象") @RequestBody Projects projects) {
         projects.setUpdatedAt(new Date());
         return getUpdateResponse(projectsService.updateById(projects), "保存失败");
     }
@@ -143,11 +162,13 @@ public class ProjectController extends BasicController {
     /**
      * 删除项目
      *
-     * @param projects
+     * @param projects 项目对象
+     * @return 删除项目响应
      */
     @PostMapping("delete")
     @Operation(summary = "删除项目")
-    public ResultResponse delete(@RequestBody Projects projects) {
+    public ResultResponse delete(
+            @Parameter(description = "项目对象") @RequestBody Projects projects) {
         return getUpdateResponse(projectsService.removeById(projects.getId()), "删除失败");
     }
 }

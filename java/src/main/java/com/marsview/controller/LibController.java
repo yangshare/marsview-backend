@@ -17,6 +17,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.Date;
 import java.util.List;
@@ -32,8 +35,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api/lib")
 @Slf4j
+@Tag(name = "组件库管理")
 public class LibController extends BasicController {
-
 
     @Autowired
     private LibService libService;
@@ -44,17 +47,24 @@ public class LibController extends BasicController {
      * @param request
      * @param pageNum
      * @param pageSize
+     * @param keyword
      * @param type
      */
     @GetMapping("list")
-    public ResultResponse list(HttpServletRequest request, int pageNum, int pageSize, String keyword, int type) {
+    @Operation(summary = "获取组件库列表")
+    public ResultResponse list(
+            HttpServletRequest request,
+            @Parameter(description = "页码") @RequestParam int pageNum,
+            @Parameter(description = "每页大小") @RequestParam int pageSize,
+            @Parameter(description = "关键词") @RequestParam(required = false) String keyword,
+            @Parameter(description = "类型（1: 自己的组件库，其他: 其他人的组件库）") @RequestParam int type) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Lib> queryWrapper = new QueryWrapper<>();
 
         if (StringUtils.hasText(keyword)) {
             queryWrapper.like("name", keyword);
         }
-        if (type == 1) {//展示自己的组件库
+        if (type == 1) { // 展示自己的组件库
             queryWrapper.eq("user_id", users.getId());
         } else {
             queryWrapper.ne("user_id", users.getId());
@@ -83,19 +93,16 @@ public class LibController extends BasicController {
     }
 
     /**
-     * 组件安装列表 TODO
-     */
-
-    /**
      * 获取组件库详情
      *
      * @param lib_id
      */
     @GetMapping("detail/{lib_id}")
-    public ResultResponse libDetail(@PathVariable("lib_id") Long lib_id) {
+    @Operation(summary = "获取组件库详情")
+    public ResultResponse libDetail(
+            @Parameter(description = "组件库ID") @PathVariable("lib_id") Long lib_id) {
         return getResponse(libService.getById(lib_id));
     }
-
 
     /**
      * 创建组件库
@@ -104,7 +111,10 @@ public class LibController extends BasicController {
      * @param lib
      */
     @PostMapping("create")
-    public ResultResponse create(HttpServletRequest request, @RequestBody Lib lib) {
+    @Operation(summary = "创建组件库")
+    public ResultResponse create(
+            HttpServletRequest request,
+            @Parameter(description = "组件库信息") @RequestBody Lib lib) {
         Users users = SessionUtils.getUser(request);
         lib.setCreatedAt(new Date());
         lib.setUserId(users.getId());
@@ -113,17 +123,14 @@ public class LibController extends BasicController {
     }
 
     /**
-     * 删除组件库 TODO
-     */
-
-
-    /**
      * 更新组件库
      *
      * @param lib
      */
     @PostMapping("update")
-    public ResultResponse update(@RequestBody Lib lib) {
+    @Operation(summary = "更新组件库")
+    public ResultResponse update(
+            @Parameter(description = "组件库信息") @RequestBody Lib lib) {
         return getUpdateResponse(libService.updateById(lib), "处理失败");
     }
 
@@ -133,7 +140,9 @@ public class LibController extends BasicController {
      * @param lib
      */
     @PostMapping("publish")
-    public ResultResponse publish(@RequestBody Lib lib) {
+    @Operation(summary = "发布组件库")
+    public ResultResponse publish(
+            @Parameter(description = "组件库信息") @RequestBody Lib lib) {
         return getUpdateResponse(libService.updateById(lib), "发布失败");
     }
 }

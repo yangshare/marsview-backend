@@ -18,6 +18,9 @@ import com.marsview.mapper.RolesMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,7 @@ import java.util.Map;
  * @author yangshare simayifeng@gmail.com
  * @createTime: 2024/9/27 16:52
  */
+@Tag(name = "角色管理")
 @RestController
 @RequestMapping("api/role")
 public class RoleController extends BasicController {
@@ -39,14 +43,9 @@ public class RoleController extends BasicController {
     @Autowired
     private RolesService rolesService;
 
-    /**
-     * 创建角色
-     *
-     * @param request
-     * @param rolesDto
-     */
+    @Operation(summary = "创建角色")
     @PostMapping("create")
-    public ResultResponse create(HttpServletRequest request, @RequestBody RolesDto rolesDto) {
+    public ResultResponse create(HttpServletRequest request, @Parameter(description = "角色信息") @RequestBody RolesDto rolesDto) {
         if (StringUtils.isEmpty(rolesDto.getProject_id())) {
             return getErrorResponse("项目id不能为空");
         }
@@ -60,15 +59,9 @@ public class RoleController extends BasicController {
         return getUpdateResponse(rolesService.save(roles), "新增失败");
     }
 
-    /**
-     * 获取角色列表
-     *
-     * @param pageNum
-     * @param pageSize
-     * @param project_id
-     */
+    @Operation(summary = "获取角色列表")
     @GetMapping("list")
-    public ResultResponse list(int pageNum, int pageSize, Long project_id) {
+    public ResultResponse list(@Parameter(description = "当前页数") int pageNum, @Parameter(description = "每页大小") int pageSize, @Parameter(description = "项目id") Long project_id) {
         if (project_id == null || project_id == 0) {
             return getErrorResponse("项目id不能为空");
         }
@@ -88,14 +81,9 @@ public class RoleController extends BasicController {
                 .build();
     }
 
-    /**
-     * 获取角色列表
-     *
-     * @param response
-     * @param project_id
-     */
+    @Operation(summary = "获取所有角色列表")
     @GetMapping("listAll")
-    public ResultResponse listAll(HttpServletResponse response, Long project_id) {
+    public ResultResponse listAll(HttpServletResponse response, @Parameter(description = "项目id") Long project_id) {
         if (project_id == null || project_id == 0) {
             return getErrorResponse("项目id不能为空");
         }
@@ -111,25 +99,16 @@ public class RoleController extends BasicController {
                 .build();
     }
 
-    /**
-     * 更新角色信息
-     *
-     * @param response
-     * @param roles
-     */
+    @Operation(summary = "更新角色信息")
     @PostMapping("updateLimits")
-    public ResultResponse updateLimits(HttpServletResponse response, @RequestBody Roles roles) {
+    public ResultResponse updateLimits(HttpServletResponse response, @Parameter(description = "角色信息") @RequestBody Roles roles) {
         roles.setUpdatedAt(new Date());
         return getUpdateResponse(rolesService.updateById(roles), "设置失败");
     }
 
-    /**
-     * 删除角色
-     *
-     * @param rolesDto
-     */
+    @Operation(summary = "删除角色")
     @PostMapping("delete")
-    public ResultResponse delete(@RequestBody RolesDto rolesDto) {
+    public ResultResponse delete(@Parameter(description = "角色信息") @RequestBody RolesDto rolesDto) {
         return getUpdateResponse(rolesService.removeById(rolesDto.getId()), "删除失败");
     }
 }
