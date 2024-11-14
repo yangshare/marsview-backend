@@ -3,22 +3,22 @@ const pageService = require('../service/pages.service');
 const util = require('../utils/util');
 module.exports = {
   async list(ctx) {
-    const { name, status, project_id } = ctx.request.body;
-    if (!util.isNumber(project_id)) {
-      return ctx.throw(400, 'project_id不合法');
+    const { name, status, projectId } = ctx.request.body;
+    if (!util.isNumber(projectId)) {
+      return ctx.throw(400, 'projectId不合法');
     }
-    const list = await menuService.list(name, status, project_id);
+    const list = await menuService.list(name, status, projectId);
     util.success(ctx, { list });
   },
   async create(ctx) {
     const { userId, userName } = util.decodeToken(ctx);
-    const { project_id, name, type, is_create } = ctx.request.body;
+    const { projectId, name, type, isCreate } = ctx.request.body;
 
-    if (project_id === 0) {
+    if (projectId === 0) {
       return ctx.throw(400, '请先创建项目');
     }
-    if (!util.isNumber(project_id)) {
-      return ctx.throw(400, 'project_id不合法');
+    if (!util.isNumber(projectId)) {
+      return ctx.throw(400, 'projectId不合法');
     }
 
     if (!name) {
@@ -28,12 +28,12 @@ module.exports = {
     try {
       let pageId = 0;
       // 只有菜单和页面类型支持自动创建页面
-      if (type !== 2 && is_create === 1) {
-        const res = await pageService.createPage(name, userId, userName, '', '', 1, 2, project_id);
+      if (type !== 2 && isCreate === 1) {
+        const res = await pageService.createPage(name, userId, userName, '', '', 1, 2, projectId);
         pageId = res.insertId || 0;
       }
 
-      await menuService.create({ ...ctx.request.body, page_id: pageId, userId, userName });
+      await menuService.create({ ...ctx.request.body, pageId, userId, userName });
       util.success(ctx);
     } catch (error) {
       util.fail(ctx, error.message);

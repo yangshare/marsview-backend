@@ -3,13 +3,30 @@ const connection = require('../sql');
 class MenuService {
   async list(name, status, project_id) {
     const statement = `
-        SELECT *
-          FROM menu
-          WHERE
-            (name LIKE COALESCE(CONCAT('%',?,'%'), name) OR ? IS NULL)
-            AND (status = COALESCE(?, status) OR ? IS NULL)
-            AND project_id = ?;
-        `;
+      SELECT
+        id,
+        project_id as projectId,
+        name,
+        parent_id as parentId,
+        type,
+        icon,
+        path,
+        page_id as pageId,
+        sort_num as sortNum,
+        status,
+        code,
+        user_id as userId,
+        user_name as userName,
+        updated_at as updatedAt,
+        created_at as createdAt
+      FROM 
+        menu
+      WHERE
+        (name LIKE COALESCE(CONCAT('%',?,'%'), name) OR ? IS NULL)
+      AND 
+        (status = COALESCE(?, status) OR ? IS NULL)
+      AND project_id = ?;
+    `;
     const [result] = await connection.execute(statement, [
       name || null,
       name || null,
@@ -24,15 +41,15 @@ class MenuService {
     const statement =
       'INSERT INTO menu (project_id, name, parent_id, type, code, icon, path, page_id, sort_num, status, user_name, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
     const [result] = await connection.execute(statement, [
-      params.project_id,
+      params.projectId,
       params.name,
-      params.parent_id || null,
+      params.parentId || null,
       params.type || 1,
       params.code || '',
       params.icon || '',
       params.path || '',
-      params.page_id || 0,
-      params.sort_num || 1,
+      params.pageId || 0,
+      params.sortNum || 1,
       params.status || 1,
       params.userName,
       params.userId,
@@ -41,7 +58,26 @@ class MenuService {
   }
 
   async getMenuInfoById(id) {
-    const statement = `SELECT * FROM menu WHERE id = ?;`;
+    const statement = `
+    SELECT 
+      id,
+      project_id as projectId,
+      name,
+      parent_id as parentId,
+      type,
+      icon,
+      path,
+      page_id as pageId,
+      sort_num as sortNum,
+      status,
+      code,
+      user_id as userId,
+      user_name as userName,
+      updated_at as updatedAt,
+      created_at as createdAt
+    FROM 
+      menu 
+    WHERE id = ?;`;
     const [result] = await connection.execute(statement, [id]);
     return result;
   }
@@ -53,9 +89,9 @@ class MenuService {
   }
 
   // 根据页面ID删除
-  async deleteMenuByProjectId(project_id) {
+  async deleteMenuByProjectId(projectId) {
     const statement = 'DELETE FROM menu WHERE project_id = ?;';
-    const [result] = await connection.execute(statement, [project_id]);
+    const [result] = await connection.execute(statement, [projectId]);
     return result;
   }
 
@@ -64,13 +100,13 @@ class MenuService {
       'UPDATE menu SET name = ?, parent_id = ?, type = ?, code = ?, icon = ?, path = ?, page_id = ?, sort_num = ?, status = ? WHERE id = ?;';
     const [result] = await connection.execute(statement, [
       params.name,
-      params.parent_id || null,
+      params.parentId || null,
       params.type || 1,
       params.code || '',
       params.icon || '',
       params.path || '',
-      params.page_id || 0,
-      params.sort_num || 1,
+      params.pageId || 0,
+      params.sortNum || 1,
       params.status || 1,
       params.id,
     ]);

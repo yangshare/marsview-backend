@@ -12,11 +12,11 @@ class PagesService {
     const statement = `
       SELECT 
         id,
-        form_name,
-        form_desc,
-        page_id,
-        user_name,
-        updated_at
+        form_name as formName,
+        form_desc as formDesc,
+        page_id as pageId,
+        user_name as userName,
+        updated_at as updatedAt
       FROM 
         workflows 
       WHERE
@@ -36,7 +36,8 @@ class PagesService {
   }
 
   async getDetailById(id, user_id) {
-    const statement = 'select * from workflows where id = ? and user_id = ?;';
+    const statement =
+      'select id,form_name as formName,form_desc as formDesc,page_id as pageId,template_data as templateData,user_id as userId,user_name as userName,updated_at as updatedAt from workflows where id = ? and user_id = ?;';
     const [result] = await connection.execute(statement, [id, user_id]);
     return result;
   }

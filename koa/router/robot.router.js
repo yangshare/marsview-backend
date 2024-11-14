@@ -47,30 +47,30 @@ router.post('/sendMessage', async (ctx) => {
   const token = await getTenantToken();
   if (!token) return util.fail(ctx, '获取飞书token失败');
 
-  const { msg_type, content, receive_id, template_id, variables } = ctx.request.body;
+  const { msgType, content, receiveId, templateId, variables } = ctx.request.body;
 
-  if (!msg_type || (msg_type !== 'text' && msg_type !== 'interactive')) {
+  if (!msgType || (msgType !== 'text' && msgType !== 'interactive')) {
     return ctx.throw(400, '消息类型错误，仅支持text和interactive');
   }
-  if (msg_type === 'text') {
+  if (msgType === 'text') {
     if (!content) return ctx.throw(400, '发送内容不能为空');
   } else {
-    if (!template_id) {
+    if (!templateId) {
       return ctx.throw(400, '发送模板不能为空');
     }
   }
-  if (!receive_id) {
+  if (!receiveId) {
     return ctx.throw(400, '接收群组ID不能为空');
   }
 
-  if (msg_type === 'text') {
+  if (msgType === 'text') {
     const res = await client.im.message.create(
       {
         params: {
           receive_id_type: 'chat_id',
         },
         data: {
-          receive_id,
+          receive_id: receiveId,
           content: JSON.stringify({ text: content }),
           msg_type: 'text',
         },
@@ -89,9 +89,9 @@ router.post('/sendMessage', async (ctx) => {
           receive_id_type: 'chat_id', //chat_id
         },
         data: {
-          receive_id,
-          msg_type,
-          template_id,
+          receive_id: receiveId,
+          msg_type: msgType,
+          template_id: templateId,
           template_variable: variables || {},
         },
       },
@@ -130,9 +130,9 @@ router.get('/chat/groups', async (ctx) => {
 router.post('/createNode', async (ctx) => {
   const token = await getTenantToken();
   if (!token) return util.fail(ctx, '获取飞书token失败');
-  const { space_id, node_token, title } = ctx.request.body;
+  const { spaceId, nodeToken, title } = ctx.request.body;
 
-  if (!space_id || isNaN(space_id) || !node_token) {
+  if (!spaceId || isNaN(spaceId) || !nodeToken) {
     return ctx.throw(400, '空间ID或节点token不能为空');
   }
   if (!title) {
@@ -140,10 +140,10 @@ router.post('/createNode', async (ctx) => {
   }
   try {
     const response = await request.post(
-      `https://open.feishu.cn/open-apis/wiki/v2/spaces/${space_id}/nodes/${node_token}/copy`,
+      `https://open.feishu.cn/open-apis/wiki/v2/spaces/${spaceId}/nodes/${nodeToken}/copy`,
       JSON.stringify({
-        target_space_id: parseInt(space_id),
-        target_parent_token: node_token,
+        target_space_id: parseInt(spaceId),
+        target_parent_token: nodeToken,
         title,
       }),
       {

@@ -6,43 +6,19 @@ const util = require('../utils/util');
 module.exports = {
   async list(ctx) {
     const { userId } = util.decodeToken(ctx);
-    const { pageNum, pageSize, keyword, type = 1 } = ctx.request.query;
+    const { pageNum = 1, pageSize = 12, keyword, type = 1 } = ctx.request.query;
     const { total } = await projectsService.listCount(keyword, type, userId);
     if (total == 0) {
       return util.success(ctx, {
         list: [],
         total: 0,
-        pageSize: +pageSize || 12,
-        pageNum: +pageNum || 1,
+        pageSize: +pageSize,
+        pageNum: +pageNum,
       });
     }
-    const list = await projectsService.list(pageNum || 1, pageSize || 12, keyword, type, userId);
-
-    const projectList = [];
-    // 过滤没有权限的数据，防止用户恶意操作
-    for (const item of list) {
-      if (item.user_id == userId || item.members?.filter((i) => i.user_id == userId).length > 0) {
-        projectList.push({
-          ...item,
-          is_edit: true,
-        });
-      } else {
-        projectList.push({
-          // 私有项目，不返回ID
-          id: item.is_public == 1 ? item.id : 0,
-          name: item.name,
-          logo: item.logo,
-          remark: item.remark,
-          is_public: item.is_public,
-          // 不管私有还是公开，没有开发者，一律不可编辑
-          is_edit: false,
-          user_name: item.user_name,
-          updated_at: item.updated_at,
-        });
-      }
-    }
+    const list = await projectsService.list(pageNum, pageSize, keyword, type, userId);
     util.success(ctx, {
-      list: projectList,
+      list,
       total,
       pageSize: +pageSize,
       pageNum: +pageNum,
@@ -65,8 +41,8 @@ module.exports = {
     }
     await projectsService.createProject({
       ...params,
-      user_id: userId,
-      user_name: userName,
+      userId,
+      userName,
     });
     util.success(ctx);
   },
@@ -78,7 +54,7 @@ module.exports = {
     }
     const { userId } = util.decodeToken(ctx);
     const [projectInfo] = await projectsService.getProjectInfoById(+id);
-    if (!projectInfo || projectInfo.user_id != userId) {
+    if (!projectInfo || projectInfo.userId != userId) {
       return ctx.throw(400, '您暂无权限删除该项目');
     }
     const res = await projectsService.deleteProject(id, userId);

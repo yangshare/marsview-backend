@@ -3,9 +3,9 @@ const publishService = require('../service/publish.service');
 const util = require('../utils/util');
 module.exports = {
   async list(ctx) {
-    const { env, user_name, start, end, pageNum, pageSize, page_id } = ctx.request.body;
+    const { env, userName, start, end, pageNum, pageSize, pageId } = ctx.request.body;
     const list = await publishService.list(ctx.request.body);
-    const total = await publishService.listCount(env, user_name, start, end, page_id);
+    const total = await publishService.listCount(env, userName, start, end, pageId);
     util.success(ctx, {
       list,
       total,
@@ -15,13 +15,13 @@ module.exports = {
   },
 
   async create(ctx) {
-    const { page_id, env, preview_img } = ctx.request.body;
+    const { pageId, env, previewImg } = ctx.request.body;
 
-    if (!util.isNotEmpty(page_id)) {
+    if (!util.isNotEmpty(pageId)) {
       return ctx.throw(400, '页面ID不能为空');
     }
 
-    if (!util.isNumber(page_id)) {
+    if (!util.isNumber(pageId)) {
       return ctx.throw(400, '页面ID参数错误');
     }
 
@@ -31,13 +31,13 @@ module.exports = {
 
     const { userId, userName } = util.decodeToken(ctx);
 
-    const [pageInfo] = await pagesService.getPageInfoById(+page_id);
+    const [pageInfo] = await pagesService.getPageInfoById(+pageId);
     if (!pageInfo || !pageInfo.page_data) {
       return ctx.throw(400, '页面不存在或页面数据为空');
     }
-    const result = await publishService.createPublish(page_id, pageInfo.name, pageInfo.page_data, userName, userId, env);
+    const result = await publishService.createPublish(pageId, pageInfo.name, pageInfo.pageData, userName, userId, env);
 
-    await pagesService.updatePageState(result.insertId, page_id, env, preview_img);
+    await pagesService.updatePageState(result.insertId, pageId, env, previewImg);
 
     util.success(ctx);
   },

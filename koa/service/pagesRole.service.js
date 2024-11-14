@@ -1,15 +1,15 @@
 const connection = require('../sql');
 
 class PagesRoleService {
-  async getPagesRoleList(page_id) {
-    const statement = 'SELECT id, page_id, role, user_id, user_name FROM pages_role WHERE page_id = ?;';
-    const [result] = await connection.execute(statement, [page_id]);
+  async getPagesRoleList(pageId) {
+    const statement = 'SELECT id, page_id as pageId, role, user_id as userId, user_name as userName FROM pages_role WHERE page_id = ?;';
+    const [result] = await connection.execute(statement, [pageId]);
     return result;
   }
 
-  async create(type, page_id, role, user_id, user_name) {
+  async create(type, pageId, role, userId, userName) {
     const statement = 'INSERT INTO pages_role (type, page_id, role, user_id, user_name) VALUES (?, ?, ?, ?, ?);';
-    const [result] = await connection.execute(statement, [type, page_id, role, user_id, user_name]);
+    const [result] = await connection.execute(statement, [type, pageId, role, userId, userName]);
     return result;
   }
 
@@ -21,9 +21,9 @@ class PagesRoleService {
   }
 
   // 根据页面ID删除
-  async deleteByPageId(page_id) {
+  async deleteByPageId(pageId) {
     const statement = 'DELETE FROM pages_role WHERE page_id = ?;';
-    const [result] = await connection.execute(statement, [page_id]);
+    const [result] = await connection.execute(statement, [pageId]);
     return result;
   }
 }

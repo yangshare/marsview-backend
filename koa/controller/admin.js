@@ -6,12 +6,12 @@ const util = require('../utils/util');
 
 // 项目配置
 async function getProjectConfig(ctx) {
-  const { project_id } = ctx.request.query;
+  const { projectId } = ctx.request.query;
 
-  if (!project_id) {
+  if (!projectId) {
     return ctx.throw(400, '项目ID不能为空');
   }
-  const info = await adminService.getProjectConfig(project_id);
+  const info = await adminService.getProjectConfig(projectId);
   util.success(ctx, info?.[0] || {});
 }
 
@@ -27,10 +27,10 @@ async function getPageDetail(ctx) {
 
   let [result] = await adminService.getPageDetailById(id);
   if (result) {
-    const last_publish_id = result[`${env}_publish_id`];
-    if (last_publish_id > 0) {
-      const page_id = result.id;
-      [result] = await adminService.getLastPublishInfo(page_id, last_publish_id);
+    const lastPublishId = result[`${env}PublishId`];
+    if (lastPublishId > 0) {
+      const pageId = result.id;
+      [result] = await adminService.getLastPublishInfo(pageId, lastPublishId);
       util.success(ctx, result);
     } else {
       util.fail(ctx, '当前页面未发布', 500);
@@ -75,32 +75,32 @@ async function getMenuList(ctx) {
   // 判断项目是否存在
   if (project.length > 0) {
     // 判断项目是否公开
-    if (project[0].is_public === 1) {
+    if (project[0].isPublic === 1) {
       const menuList = await adminService.getAllMenuList(id);
       util.success(ctx, { list: menuList });
     } else {
       // 创建用户相当于系统超级管理员
-      if (project[0].user_id === userId) {
+      if (project[0].userId === userId) {
         const menuList = await adminService.getAllMenuList(id);
         util.success(ctx, { list: menuList });
       } else {
         const user = await userService.getUserRole(userId, id);
         if (!user) {
-          return util.fail(ctx, '您暂无访问权限，请联系管理员: ' + project[0].user_id, '10001');
+          return util.fail(ctx, '您当前暂无访问权限', '10001');
         }
         // 管理员返回全部菜单
-        if (user.system_role === 1) {
+        if (user.systemRole === 1) {
           const menuList = await adminService.getAllMenuList(id);
           util.success(ctx, { list: menuList });
         } else {
           // 根据用户角色查询对应菜单列表
-          const { id, checked = '', half_checked = '' } = await roleService.getRoleInfo(user.role_id);
+          const { id, checked = '', halfChecked = '' } = await roleService.getRoleInfo(user.roleId);
           let menuIds = [];
           if (checked) {
             menuIds = menuIds.concat(checked.split(','));
           }
-          if (half_checked) {
-            menuIds = menuIds.concat(half_checked.split(','));
+          if (halfChecked) {
+            menuIds = menuIds.concat(halfChecked.split(','));
           }
           if (menuIds.length === 0) {
             util.success(ctx, { list: [] });
