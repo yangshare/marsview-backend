@@ -45,3 +45,35 @@ mybatis-plus:
   pagination:
     enable: true
 
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    #operations-sorter: order
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  group-configs:
+    - group: 'default'
+      display-name: 'marsview'
+      paths-to-match: '/**'
+      packages-to-scan: com.marsview
+  default-flat-param-object: true
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+    swagger-model-name: 实体类列表
+  basic:
+    enable: false
+    username: abc
+    password: 123
+  insight:
+    enable: true
+    service-name: boot3
+    secret: S6CsnS8AnPVyb8vvChcdXm4R3p6A6KlAISxBg3IIEgk=
+    server: http://localhost:10086
+    namespace: spring3
+

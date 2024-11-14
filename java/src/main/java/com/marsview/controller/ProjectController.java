@@ -12,6 +12,8 @@ import com.marsview.domain.Users;
 import com.marsview.dto.ProjectsDto;
 import com.marsview.service.ProjectsService;
 import com.marsview.util.SessionUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("api/project")
+@Tag(name = "项目管理")
 public class ProjectController extends BasicController {
 
     @Autowired
@@ -48,6 +51,7 @@ public class ProjectController extends BasicController {
      * @param keyword
      */
     @GetMapping("list")
+    @Operation(summary = "分页获取项目列表")
     public ResultResponse list(HttpServletRequest request, HttpServletResponse response, int type, int pageNum, int pageSize, String keyword) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Projects> queryWrapper = new QueryWrapper<>();
@@ -89,6 +93,7 @@ public class ProjectController extends BasicController {
      * @param projectsDto
      */
     @PostMapping("create")
+    @Operation(summary = "创建项目")
     public ResultResponse create(HttpServletRequest request, @RequestBody JSONObject projectsDto) {
         Users users = SessionUtils.getUser(request);
         Projects projects = new Projects();
@@ -117,6 +122,7 @@ public class ProjectController extends BasicController {
      * @param page_id
      */
     @GetMapping("/detail/{page_id}")
+    @Operation(summary = "获取页面列表")
     public ResultResponse detail(HttpServletRequest request, HttpServletResponse response, @PathVariable("page_id") Long page_id) {
         return getResponse(projectsService.getById(page_id));
     }
@@ -128,6 +134,7 @@ public class ProjectController extends BasicController {
      * @param projects
      */
     @PostMapping("update")
+    @Operation(summary = "更新项目")
     public ResultResponse update(HttpServletResponse response, @RequestBody Projects projects) {
         projects.setUpdatedAt(new Date());
         return getUpdateResponse(projectsService.updateById(projects), "保存失败");
@@ -139,6 +146,7 @@ public class ProjectController extends BasicController {
      * @param projects
      */
     @PostMapping("delete")
+    @Operation(summary = "删除项目")
     public ResultResponse delete(@RequestBody Projects projects) {
         return getUpdateResponse(projectsService.removeById(projects.getId()), "删除失败");
     }
