@@ -18,23 +18,8 @@ module.exports = {
     }
     const list = await pageService.list(pageNum || 1, pageSize || 12, keyword, type, userId);
 
-    const pageList = [];
-    // 过滤没有权限的数据，防止用户恶意操作
-    for (const item of list) {
-      if (item.user_id == userId || item.members?.filter((i) => i.user_id == userId).length > 0 || item.is_public == 1) {
-        pageList.push(item);
-      } else {
-        pageList.push({
-          name: item.name,
-          logo: item.logo,
-          remark: item.remark,
-          user_name: item.user_name,
-          updated_at: item.updated_at,
-        });
-      }
-    }
     util.success(ctx, {
-      list: pageList,
+      list,
       total,
       pageSize: +pageSize,
       pageNum: +pageNum,
@@ -80,8 +65,8 @@ module.exports = {
       return util.fail(ctx, '页面不存在');
     }
     const { userId, userName } = util.decodeToken(ctx);
-    const { name, remark, page_data, is_public = 1, is_edit = 1 } = pageInfo;
-    await pageService.createPage(name + '-副本', userId, userName, remark, page_data, is_public == 3 ? 1 : is_public, is_edit);
+    const { name, remark, pageData, isPublic = 1, isEdit = 1 } = pageInfo;
+    await pageService.createPage(name + '-副本', userId, userName, remark, pageData, isPublic == 3 ? 1 : isPublic, isEdit);
     util.success(ctx);
   },
 
@@ -92,7 +77,7 @@ module.exports = {
     }
     const { userId } = util.decodeToken(ctx);
     const [pageInfo] = await pageService.getPageSimpleById(+id);
-    if (!pageInfo || pageInfo.user_id !== userId) {
+    if (!pageInfo || pageInfo.userId !== userId) {
       return util.fail(ctx, '您暂无权限删除该页面');
     }
     const res = await pageService.deletePage(id, userId);
@@ -106,17 +91,17 @@ module.exports = {
 
   async create(ctx) {
     const { userId, userName } = util.decodeToken(ctx);
-    const { name, remark, is_public = 1, is_edit = 1 } = ctx.request.body;
+    const { name, remark, isPublic = 1, isEdit = 1 } = ctx.request.body;
     if (!name) {
       return ctx.throw(400, '页面名称不能为空');
     }
 
-    await pageService.createPage(name, userId, userName, remark, '', is_public, is_edit);
+    await pageService.createPage(name, userId, userName, remark, '', isPublic, isEdit);
     util.success(ctx);
   },
 
   async update(ctx) {
-    const { id, name, remark = '', page_data, is_public = 1, is_edit = 1, preview_img = '' } = ctx.request.body;
+    const { id, name, remark = '', pageData, isPublic = 1, isEdit = 1, previewImg = '' } = ctx.request.body;
     if (!util.isNotEmpty(id)) {
       return ctx.throw(400, '页面ID不能为空');
     }
@@ -130,24 +115,24 @@ module.exports = {
       return util.fail(ctx, '当前页面不存在');
     }
     // 只读权限的页面只有创建者才能编辑
-    if (pageInfo.is_edit === 2 && pageInfo.user_id !== userId) {
+    if (pageInfo.isEdit === 2 && pageInfo.userId !== userId) {
       return util.fail(ctx, '您当前暂无编辑权限');
     }
     // 模板页面只有管理员才能编辑
-    if (pageInfo.is_public === 3 && pageInfo.user_id !== userId) {
+    if (pageInfo.isPublic === 3 && pageInfo.userId !== userId) {
       return util.fail(ctx, '您当前暂无编辑权限');
     }
-    await pageService.updatePageInfo(name, remark, page_data, is_public, is_edit, id, preview_img);
+    await pageService.updatePageInfo(name, remark, pageData, isPublic, isEdit, id, previewImg);
     util.success(ctx);
   },
 
   // 页面角色 - 成员列表
   async roleList(ctx) {
-    const { page_id } = ctx.request.body;
-    if (!page_id) {
+    const { pageId } = ctx.request.body;
+    if (!pageId) {
       return ctx.throw(400, '页面ID不能为空');
     }
-    const list = await pagesRoleService.getPagesRoleList(page_id);
+    const list = await pagesRoleService.getPagesRoleList(pageId);
     util.success(ctx, { list });
   },
 
@@ -156,12 +141,12 @@ module.exports = {
    * page_id: 页面ID或者项目ID，共用同一张表
    */
   async roleAdd(ctx) {
-    const { type, page_id, role, user_name } = ctx.request.body;
+    const { type, pageId, role, userName } = ctx.request.body;
     if (!type) {
       return ctx.throw(400, '成员类型不能为空');
     }
 
-    if (!page_id || isNaN(+page_id)) {
+    if (!pageId || isNaN(+pageId)) {
       return ctx.throw(400, '页面ID或项目ID不能为空');
     }
 
@@ -169,14 +154,14 @@ module.exports = {
       return ctx.throw(400, '角色不能为空');
     }
 
-    if (!user_name) {
+    if (!userName) {
       return ctx.throw(400, '开发者ID或名称不能为空');
     }
-    const res = await userService.search(user_name);
+    const res = await userService.search(userName);
     if (!res) {
       return ctx.throw(400, '当前用户不存在');
     }
-    await pagesRoleService.create(type, page_id, role, res.id, user_name);
+    await pagesRoleService.create(type, pageId, role, res.id, userName);
     util.success(ctx);
   },
 
@@ -192,19 +177,19 @@ module.exports = {
 
   // 页面回滚
   async rollback(ctx) {
-    const { page_id, last_publish_id, env } = ctx.request.body;
-    if (!util.isNotEmpty(page_id)) {
+    const { pageId, lastPublishId, env } = ctx.request.body;
+    if (!util.isNotEmpty(pageId)) {
       return ctx.throw(400, '页面ID不能为空');
     }
 
-    if (!util.isNotEmpty(last_publish_id)) {
+    if (!util.isNotEmpty(lastPublishId)) {
       return ctx.throw(400, '回滚ID不能为空');
     }
 
     if (!util.checkEnv(env)) {
       return ctx.throw(400, '环境不能为空');
     }
-    await pageService.updateLastPublishId(page_id, last_publish_id, env);
+    await pageService.updateLastPublishId(pageId, lastPublishId, env);
     util.success(ctx);
   },
 };

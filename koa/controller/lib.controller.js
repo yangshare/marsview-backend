@@ -38,13 +38,6 @@ module.exports = {
       return ctx.throw(400, '组件id不能为空');
     }
     const [result = {}] = await libService.getDetailById(+id);
-    if (result.source) {
-      const [react_source, less_source, config_source] = result.source.split('>>>>>>>>>>');
-      delete result.source;
-      result.react_source = react_source;
-      result.less_source = less_source;
-      result.config_source = config_source;
-    }
     util.success(ctx, result);
   },
 
@@ -53,6 +46,11 @@ module.exports = {
     const { userId, userName } = util.decodeToken(ctx);
     if (!userId || !userName) {
       return ctx.throw(400, '账号信息异常，请重新登录');
+    }
+    const { total } = await libService.listCount('', 1, userId);
+    const message = total > 2 && userId != 50 ? '您当前最多可以创建2个自定义组件' : '';
+    if (message) {
+      return util.fail(ctx, message);
     }
     if (!tag) {
       return ctx.throw(400, '组件标识不能为空');
@@ -78,24 +76,23 @@ module.exports = {
   },
 
   async update(ctx) {
-    const { id, react_code, less_code, config_code, md_code, hash } = ctx.request.body;
+    const { id, reactCode, lessCode, configCode, mdCode, hash } = ctx.request.body;
     if (!util.isNumber(id)) {
       return ctx.throw(400, '组件id不正确');
     }
 
-    if (!react_code) {
+    if (!reactCode) {
       return ctx.throw(400, '源码不能为空');
     }
 
-    if (!config_code) {
+    if (!configCode) {
       return ctx.throw(400, '组件配置不能为空');
     }
-
     await libService.updateLib({
-      react_code,
-      less_code,
-      config_code,
-      md_code,
+      reactCode,
+      lessCode,
+      configCode,
+      mdCode,
       hash,
       id,
     });
@@ -103,61 +100,61 @@ module.exports = {
   },
 
   async publish(ctx) {
-    const { lib_id, react_compile, config_code, css_compile, release_hash } = ctx.request.body;
-    if (!util.isNumber(lib_id)) {
+    const { libId, reactCompile, configCode, cssCompile, releaseHash } = ctx.request.body;
+    if (!util.isNumber(libId)) {
       return ctx.throw(400, '组件id不正确');
     }
 
-    if (!react_compile) {
+    if (!reactCompile) {
       return ctx.throw(400, 'react代码不能为空');
     }
 
-    if (!config_code) {
+    if (!configCode) {
       return ctx.throw(400, '组件配置不能为空');
     }
 
-    if (!release_hash) {
+    if (!releaseHash) {
       return ctx.throw(400, '缺少hash参数');
     }
 
     const { userId, userName } = util.decodeToken(ctx);
 
-    const detail = await libService.getPublishByLibId(lib_id);
+    const detail = await libService.getPublishByLibId(libId);
     if (detail) {
-      if (detail && detail.release_hash === release_hash) {
+      if (detail && detail.releaseHash === releaseHash) {
         return ctx.throw(400, '当前已经是最新版本');
       }
       const id = v4();
-      const jsName = md5Encry(userId + react_compile + Date.now()) + '.js';
-      const cssName = md5Encry(userId + css_compile + Date.now()) + '.css';
-      const configName = md5Encry(userId + config_code + Date.now()) + '.js';
-      await util.uploadString(jsName, react_compile);
-      await util.uploadString(cssName, css_compile);
-      await util.uploadString(configName, config_code);
+      const jsName = md5Encry(userId + reactCompile + Date.now()) + '.js';
+      const cssName = md5Encry(userId + cssCompile + Date.now()) + '.css';
+      const configName = md5Encry(userId + configCode + Date.now()) + '.js';
+      await util.uploadString(jsName, reactCompile);
+      await util.uploadString(cssName, cssCompile);
+      await util.uploadString(configName, configCode);
       await libService.updateLibPublish({
-        lib_id,
-        react_url: `${config.OSS_CDNDOMAIN1}/libs/${jsName}`,
-        css_url: `${config.OSS_CDNDOMAIN1}/libs/${cssName}`,
-        config_url: `${config.OSS_CDNDOMAIN1}/libs/${configName}`,
-        release_hash,
+        libId,
+        reactUrl: `${config.OSS_CDNDOMAIN1}/libs/${jsName}`,
+        cssUrl: `${config.OSS_CDNDOMAIN1}/libs/${cssName}`,
+        configUrl: `${config.OSS_CDNDOMAIN1}/libs/${configName}`,
+        releaseHash,
       });
     } else {
       const id = v4();
-      const jsName = md5Encry(userId + react_compile + Date.now()) + '.js';
-      const cssName = md5Encry(userId + css_compile + Date.now()) + '.css';
-      const configName = md5Encry(userId + config_code + Date.now()) + '.js';
-      await util.uploadString(jsName, react_compile);
-      await util.uploadString(cssName, css_compile);
-      await util.uploadString(configName, config_code);
+      const jsName = md5Encry(userId + reactCompile + Date.now()) + '.js';
+      const cssName = md5Encry(userId + cssCompile + Date.now()) + '.css';
+      const configName = md5Encry(userId + configCode + Date.now()) + '.js';
+      await util.uploadString(jsName, reactCompile);
+      await util.uploadString(cssName, cssCompile);
+      await util.uploadString(configName, configCode);
       await libService.publish({
-        lib_id,
-        release_id: id,
-        react_url: `${config.OSS_CDNDOMAIN1}/libs/${jsName}`,
-        css_url: `${config.OSS_CDNDOMAIN1}/libs/${cssName}`,
-        config_url: `${config.OSS_CDNDOMAIN1}/libs/${configName}`,
-        release_hash,
-        user_id: userId,
-        user_name: userName,
+        libId,
+        releaseId: id,
+        reactUrl: `${config.OSS_CDNDOMAIN1}/libs/${jsName}`,
+        cssUrl: `${config.OSS_CDNDOMAIN1}/libs/${cssName}`,
+        configUrl: `${config.OSS_CDNDOMAIN1}/libs/${configName}`,
+        releaseHash,
+        userId,
+        userName,
       });
     }
 

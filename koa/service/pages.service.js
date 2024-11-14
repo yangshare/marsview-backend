@@ -1,51 +1,56 @@
 const connection = require('../sql');
 class PagesService {
   async listCount(keyword, type, userId) {
-    const statement =
-      "SELECT COUNT(`id`) total FROM pages WHERE (name like COALESCE(CONCAT('%',?,'%'), name) OR ? IS NULL) AND " +
-      (type == 1 ? 'user_id = ?' : 'user_id != ?');
-    const [result] = await connection.execute(statement, [keyword || null, keyword || null, userId]);
+    const statement = `
+      SELECT 
+          count(p.id) as total
+      FROM 
+        pages p
+      LEFT JOIN   
+        (select * from pages_role WHERE user_id= ?) pr ON p.id = pr.page_id AND pr.type = 2 
+      WHERE 
+        (
+          (name like COALESCE(CONCAT('%',?,'%'), name) OR ? IS NULL) 
+          AND p.user_id ${type == 1 ? '=' : '!='} ?
+        ) OR pr.page_id IS NOT NULL
+    `;
+    const [result] = await connection.execute(statement, [userId, keyword || null, keyword || null, userId]);
     return result[0];
   }
   async list(pageNum, pageSize, keyword, type, userId) {
     const offset = (+pageNum - 1) * pageSize + '';
     const limit = pageSize;
-    const statement =
-      `
+    const statement = `
       SELECT 
         p.id,
         p.name,
-        p.user_id,
-        p.user_name,
+        p.user_id as userId,
         p.remark,
-        p.is_public,
-        p.is_edit,
-        p.preview_img,
-        p.stg_publish_id,
-        p.pre_publish_id,
-        p.prd_publish_id,
-        p.stg_state,
-        p.pre_state,
-        p.prd_state,
-        p.project_id,
-        p.updated_at,
-        SUBSTRING_INDEX(p.user_name, '@', 1) as user_name,
-        (  
-        SELECT JSON_ARRAYAGG(  
-            JSON_OBJECT('id', pr.id, 'role', pr.role, 'user_id', pr.user_id, 'user_name', pr.user_name)  
-        )  
-        FROM pages_role pr  
-        WHERE pr.page_id = p.id  
-        ) AS members  
+        p.is_public as isPublic,
+        p.is_edit as isEdit,
+        p.preview_img as previewImg,
+        p.stg_publish_id as stgPublishId,
+        p.pre_publish_id as prePublishId,
+        p.prd_publish_id as prdPublishId,
+        p.stg_state as stgState,
+        p.pre_state as preState,
+        p.prd_state as prdState,
+        p.project_id as projectId,
+        p.updated_at as updatedAt,
+        SUBSTRING_INDEX(p.user_name, '@', 1) as userName
       FROM 
-          pages p 
+        pages p
+      LEFT JOIN   
+        (select * from pages_role WHERE user_id= ?) pr ON p.id = pr.page_id AND pr.type = 2 
       WHERE 
-        (name like COALESCE(CONCAT('%',?,'%'), name) OR ? IS NULL) AND ` +
-      (type == 1 ? 'p.user_id = ?' : 'p.user_id != ?') +
-      `
+        (
+          (name like COALESCE(CONCAT('%',?,'%'), name) OR ? IS NULL) 
+          AND p.user_id ${type == 1 ? '=' : '!='} ?
+        ) OR pr.page_id IS NOT NULL
       ORDER BY 
         p.updated_at DESC LIMIT ${offset},${limit};`;
-    const [result] = await connection.execute(statement, [keyword || null, keyword || null, userId]);
+    const [result] = await connection.execute(statement, [userId, keyword || null, keyword || null, userId]);
+    console.log('list', result.length);
     return result;
   }
 
@@ -59,23 +64,20 @@ class PagesService {
   // 查询页面模板
   async listPageTemplate(pageNum, pageSize, keyword) {
     const offset = (+pageNum - 1) * pageSize + '';
-    const statement = `SELECT id,
+    const statement = `
+    SELECT 
+      id,
       name,
-      user_id,
-      user_name,
+      user_id as userId,
       remark,
-      is_public,
-      is_edit,
-      preview_img,
-      stg_publish_id,
-      pre_publish_id,
-      prd_publish_id,
-      stg_state,
-      pre_state,
-      prd_state,
-      project_id,
-      updated_at,
-      SUBSTRING_INDEX(user_name, '@', 1) as user_name 
+      is_public as isPublic,
+      is_edit as isEdit,
+      preview_img as previewImg,
+      stg_publish_id as stgPublishId,
+      stg_state as stgState,
+      project_id as projectId,
+      updated_at as updatedAt,
+      SUBSTRING_INDEX(user_name, '@', 1) as userName 
     FROM 
       pages 
     WHERE 
@@ -89,42 +91,65 @@ class PagesService {
   }
 
   async getPageInfoById(id) {
-    const statement = "SELECT *,SUBSTRING_INDEX(user_name, '@', 1) as user_name FROM pages WHERE id = ?;";
+    const statement = `
+    SELECT 
+      id,
+      name,
+      user_id as userId,
+      user_name as userName,
+      remark,
+      is_public as isPublic,
+      is_edit as isEdit,
+      preview_img as previewImg,
+      page_data as pageData,
+      stg_publish_id as stgPublishId,
+      pre_publish_id as prePublishId,
+      prd_publish_id as prdPublishId,
+      stg_state as stgState,
+      pre_state as preState,
+      prd_state as prdState,
+      project_id as projectId,
+      updated_at as updatedAt,
+      SUBSTRING_INDEX(user_name, '@', 1) as userName 
+    FROM 
+      pages 
+    WHERE id = ?;
+    `;
     const [result] = await connection.execute(statement, [id]);
     return result;
   }
 
   async getPageSimpleById(id) {
-    const statement = "SELECT user_id, SUBSTRING_INDEX(user_name, '@', 1) as user_name, is_public, is_edit FROM pages WHERE id = ?;";
+    const statement = 'SELECT user_id as userId, is_public as isPublic, is_edit as isEdit FROM pages WHERE id = ?;';
     const [result] = await connection.execute(statement, [id]);
     return result;
   }
 
-  async createPage(name, user_id, user_name, remark = '', page_data, is_public, is_edit, project_id = 0) {
+  async createPage(name, userId, userName, remark = '', pageData, isPublic, isEdit, projectId = 0) {
     const statement =
       'INSERT INTO pages (name, user_id, user_name, remark, page_data, is_public, is_edit,project_id) VALUES (?, ?, ?, ?, ?, ?, ?,?);';
-    const [result] = await connection.execute(statement, [name, user_id, user_name, remark, page_data, is_public, is_edit, project_id]);
+    const [result] = await connection.execute(statement, [name, userId, userName, remark, pageData, isPublic, isEdit, projectId]);
     return result;
   }
 
-  async deletePage(page_id, user_id) {
+  async deletePage(pageId, userId) {
     const statement = 'DELETE FROM pages WHERE id = ? and user_id = ?;';
-    const [result] = await connection.execute(statement, [page_id, user_id]);
+    const [result] = await connection.execute(statement, [pageId, userId]);
     return result;
   }
 
   //state=> 1: 未保存 2: 已保存 3: 已发布 4: 已回滚
-  async updatePageInfo(name, remark, page_data, is_public, is_edit, id, preview_img) {
+  async updatePageInfo(name, remark, pageData, isPublic, isEdit, id, previewImg) {
     let statement = `UPDATE pages SET stg_state=2, pre_state=2, prd_state=2, name = ?, remark = ?, is_public = ?, is_edit = ?`;
-    let sql_params = [name, remark, is_public, is_edit];
+    let sql_params = [name, remark, isPublic, isEdit];
 
-    if (preview_img) {
+    if (previewImg) {
       statement += `, preview_img = ?`;
-      sql_params.push(preview_img);
+      sql_params.push(previewImg);
     }
-    if (page_data) {
+    if (pageData) {
       statement += `, page_data = ?`;
-      sql_params.push(page_data);
+      sql_params.push(pageData);
     }
 
     statement += ` WHERE id = ?;`;
@@ -134,12 +159,12 @@ class PagesService {
   }
 
   //state=> 1: 未保存 2: 已保存 3: 已发布 4: 已回滚
-  async updatePageState(last_publish_id, id, env, preview_img) {
+  async updatePageState(lastPublishId, id, env, previewImg) {
     let statement = `UPDATE pages SET ${env}_state=3, ${env}_publish_id = ?`;
-    let sql_params = [last_publish_id];
-    if (preview_img) {
+    let sql_params = [lastPublishId];
+    if (previewImg) {
       statement += `, preview_img = ?`;
-      sql_params.push(preview_img);
+      sql_params.push(previewImg);
     }
     statement += ` WHERE id = ?;`;
     sql_params.push(id);
@@ -147,9 +172,9 @@ class PagesService {
     return result;
   }
 
-  async updateLastPublishId(page_id, last_publish_id, env) {
+  async updateLastPublishId(pageId, lastPublishId, env) {
     const statement = `UPDATE pages SET ${env}_state=4, ${env}_publish_id = ? WHERE id = ?;`;
-    const [result] = await connection.execute(statement, [last_publish_id, page_id]);
+    const [result] = await connection.execute(statement, [lastPublishId, pageId]);
     return result;
   }
 }

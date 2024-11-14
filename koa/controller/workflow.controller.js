@@ -34,16 +34,16 @@ module.exports = {
   },
 
   async create(ctx) {
-    const { form_name, form_desc } = ctx.request.body;
+    const { formName, formDesc } = ctx.request.body;
     const { userId, userName } = util.decodeToken(ctx);
     if (!userId || !userName) {
       return ctx.throw(400, '账号信息异常，请重新登录');
     }
-    if (!form_name) {
+    if (!formName) {
       return ctx.throw(400, '模板名称不能为空');
     }
 
-    await workflow.createTemplate(form_name, form_desc, userId, userName);
+    await workflow.createTemplate(formName, formDesc, userId, userName);
     util.success(ctx);
   },
 
@@ -58,14 +58,14 @@ module.exports = {
   },
 
   async update(ctx) {
-    const { id, form_name, form_desc, page_id, template_data } = ctx.request.body;
+    const { id, formName, formDesc, pageId, templateData } = ctx.request.body;
     if (!util.isNumber(id)) {
       return ctx.throw(400, '组件id不正确');
     }
 
     const { userId } = util.decodeToken(ctx);
 
-    await workflow.updateTemplate(id, form_name, form_desc, page_id, template_data, userId);
+    await workflow.updateTemplate(id, formName, formDesc, pageId, templateData, userId);
     util.success(ctx);
   },
 };

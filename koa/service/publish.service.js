@@ -1,10 +1,12 @@
 const connection = require('../sql');
 class PublishService {
-  async listCount(env, user_name, created_at, updated_at, page_id) {
+  async listCount(env, userName, createdAt, updatedAt, pageId) {
     const statement = `
-    SELECT *
-      FROM pages_publish
-      WHERE
+    SELECT 
+      count(id)
+    FROM 
+      pages_publish
+    WHERE
         (env = COALESCE(?, env) OR ? IS NULL)
         AND (user_name = COALESCE(?, user_name) OR ? IS NULL)
         AND (created_at >= ? OR ? IS NULL)
@@ -14,45 +16,54 @@ class PublishService {
     const [result] = await connection.execute(statement, [
       env || null,
       env || null,
-      user_name || null,
-      user_name || null,
-      created_at || null,
-      created_at || null,
-      updated_at || null,
-      updated_at || null,
-      page_id || null,
-      page_id || null,
+      userName || null,
+      userName || null,
+      createdAt || null,
+      createdAt || null,
+      updatedAt || null,
+      updatedAt || null,
+      pageId || null,
+      pageId || null,
     ]);
     return result.length;
   }
 
-  async list({ env, user_name, created_at, updated_at, page_id, pageNum = 1, pageSize = 10 }) {
-    const offset = (+pageNum - 1) * pageSize + '';
-    const limit = pageSize;
-    // const statement = `SELECT * FROM pages_publish ORDER BY id DESC LIMIT ${offset},${limit};`;
+  async list(params) {
+    const offset = (+params.pageNum - 1) * params.pageSize + '';
+    const limit = params.pageSize;
     const statement = `
-    SELECT *
-      FROM pages_publish
-      WHERE
+    SELECT
+      id,
+      page_id as pageId,
+      page_name as pageName,
+      page_data as pageData,
+      user_id as userId,
+      user_name as userName,
+      env,
+      created_at as createdAt,
+      updated_at as updatedAt
+    FROM 
+      pages_publish
+    WHERE
         (env = COALESCE(?, env) OR ? IS NULL)
         AND (user_name = COALESCE(?, user_name) OR ? IS NULL)
         AND (created_at >= ? OR ? IS NULL)
         AND (updated_at <= ? OR ? IS NULL)
         AND (page_id = COALESCE(?, page_id) OR ? IS NULL)
-      ORDER BY id DESC
-      LIMIT ${offset},${limit};
+    ORDER BY id DESC
+    LIMIT ${offset},${limit};
     `;
     const [result] = await connection.execute(statement, [
-      env || null,
-      env || null,
-      user_name || null,
-      user_name || null,
-      created_at || null,
-      created_at || null,
-      updated_at || null,
-      updated_at || null,
-      page_id || null,
-      page_id || null,
+      params.env || null,
+      params.env || null,
+      params.userName || null,
+      params.userName || null,
+      params.createdAt || null,
+      params.createdAt || null,
+      params.updatedAt || null,
+      params.updatedAt || null,
+      params.pageId || null,
+      params.pageId || null,
     ]);
     return result;
   }

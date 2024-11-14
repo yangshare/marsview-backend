@@ -54,7 +54,7 @@ router.post('/search', async (ctx) => {
     util.fail(ctx, '当前用户名不存在');
     return;
   }
-  util.success(ctx, [res]);
+  util.success(ctx, res);
 });
 
 /**

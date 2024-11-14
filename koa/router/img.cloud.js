@@ -5,6 +5,7 @@ const util = require('../utils/util');
 const sdk = require('@baiducloud/sdk');
 const imgcloud = require('../service/imgcloud.service');
 const config = require('../config');
+
 /**
  * 图片云服务API接口
  */
@@ -15,7 +16,7 @@ router.post('/upload/files', async (ctx) => {
     const file = ctx.request.files.file;
     const { userId, userName } = util.decodeToken(ctx);
     const { total } = await imgcloud.getTotalByUserId(userId);
-    const message = total > 0 && userId == 49 ? 'Demo用户只能上传1个文件' : total > 10 && userId != 50 ? '普通用户最多可以上传10个文件' : '';
+    const message = total > 15 && userId != 50 ? '当前您最多可以上传15个文件' : '';
     if (message) {
       fs.unlink(file.filepath, (err) => {
         if (err) {
@@ -39,6 +40,7 @@ router.post('/upload/files', async (ctx) => {
     await client.putObject(bucket, key, buffer, {
       'Content-Type': file.mimetype, // 添加http header
       'Cache-Control': 'public, max-age=31536000', // 指定缓存指令
+      'x-bce-storage-class': 'COLD', // 指定存储类型
       'x-bce-acl': 'public-read',
     });
     // 删除临时文件
