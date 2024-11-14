@@ -46,7 +46,7 @@ public class RoleController extends BasicController {
     @Operation(summary = "创建角色")
     @PostMapping("create")
     public ResultResponse create(HttpServletRequest request, @Parameter(description = "角色信息") @RequestBody RolesDto rolesDto) {
-        if (StringUtils.isEmpty(rolesDto.getProject_id())) {
+        if (rolesDto.getProjectId()==null|| rolesDto.getProjectId() == 0) {
             return getErrorResponse("项目id不能为空");
         }
         Users users = SessionUtils.getUser(request);
@@ -55,7 +55,7 @@ public class RoleController extends BasicController {
         roles.setUserId(users.getId());
         roles.setUserName(users.getUserName());
         roles.setCreatedAt(new Date());
-        roles.setProjectId(Long.parseLong(rolesDto.getProject_id()));
+        roles.setProjectId(rolesDto.getProjectId());
         return getUpdateResponse(rolesService.save(roles), "新增失败");
     }
 

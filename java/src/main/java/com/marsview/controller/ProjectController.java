@@ -56,11 +56,10 @@ public class ProjectController extends BasicController {
     @Operation(summary = "分页获取项目列表")
     public ResultResponse list(
             HttpServletRequest request,
-            HttpServletResponse response,
             @Parameter(description = "项目类型") @RequestParam int type,
             @Parameter(description = "当前页码") @RequestParam int pageNum,
             @Parameter(description = "每页大小") @RequestParam int pageSize,
-            @Parameter(description = "关键词") @RequestParam String keyword) {
+            @Parameter(description = "关键词") @RequestParam(required = false) String keyword) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Projects> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", users.getId());
@@ -98,31 +97,19 @@ public class ProjectController extends BasicController {
      * 创建项目
      *
      * @param request    HTTP 请求对象
-     * @param projectsDto 项目 DTO 对象
+     * @param projects 项目 DTO 对象
      * @return 创建项目响应
      */
     @PostMapping("create")
     @Operation(summary = "创建项目")
     public ResultResponse create(
             HttpServletRequest request,
-            @Parameter(description = "项目 DTO 对象") @RequestBody JSONObject projectsDto) {
+            @Parameter(description = "项目 DTO 对象") @RequestBody Projects projects) {
         Users users = SessionUtils.getUser(request);
-        Projects projects = new Projects();
         projects.setCreatedAt(new Date());
         projects.setUserId(users.getId());
         projects.setUserName(users.getUserName());
 
-        projects.setBreadcrumb(projectsDto.getBoolean("breadcrumb") ? 1 : 0);
-        projects.setFooter(projectsDto.getBoolean("footer") ? 1 : 0);
-        projects.setIsPublic(projectsDto.getInteger("is_public"));
-        projects.setLayout(projectsDto.getInteger("layout"));
-        projects.setLogo(projectsDto.getString("logo"));
-        projects.setMenuMode(projectsDto.getString("menu_mode"));
-        projects.setMenuThemeColor(projectsDto.getString("menu_theme_color"));
-        projects.setName(projectsDto.getString("name"));
-        projects.setRemark(projectsDto.getString("remark"));
-        projects.setSystemThemeColor(projectsDto.getString("system_theme_color"));
-        projects.setTag(projectsDto.getBoolean("tag") ? 1 : 0);
         return getUpdateResponse(projectsService.save(projects), "项目创建失败");
     }
 

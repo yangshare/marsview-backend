@@ -55,14 +55,14 @@ public class MenuController extends BasicController {
         Users user = SessionUtils.getUser(request);
         // 只有菜单和页面类型支持自动创建页面
         Long pageId = 0L;
-        if (menuDto.getType() != 2 && menuDto.getIs_create() == 1) {
+        if (menuDto.getType() != 2 && menuDto.getIsCreate() == 1) {
             Pages pages = new Pages();
             pages.setName(menuDto.getName());
             pages.setUserId(user.getId());
             pages.setUserName(user.getUserName());
             pages.setIsPublic(1);
             pages.setIsEdit(2);
-            pages.setProjectId(menuDto.getProject_id());
+            pages.setProjectId(menuDto.getProjectId());
             pagesService.save(pages);
             pageId = pages.getId();
         }
@@ -72,9 +72,6 @@ public class MenuController extends BasicController {
         menu.setUserId(user.getId());
         menu.setUserName(user.getUserName());
         menu.setCreatedAt(new Date());
-        menu.setProjectId(menuDto.getProject_id());
-        menu.setPageId(menuDto.getPage_id());
-        menu.setSortNum(menuDto.getSort_num());
         menu.setPageId(pageId);
 
         return getUpdateResponse(menuService.save(menu), "新增失败");
@@ -117,11 +114,11 @@ public class MenuController extends BasicController {
         /**
          * 项目ID判断
          */
-        if (menu.getProject_id() == null || menu.getProject_id() == 0) {
+        if (menu.getProjectId() == null || menu.getProjectId() == 0) {
             return getErrorResponse("项目ID不能为空");
         }
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id", menu.getProject_id());
+        queryWrapper.eq("project_id", menu.getProjectId());
         if (StringUtils.hasText(menu.getName())) {
             queryWrapper.like("name", menu.getName());
         }

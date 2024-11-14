@@ -56,12 +56,12 @@ public class PublishController extends BasicController {
     @PostMapping("create")
     public ResultResponse create(HttpServletRequest request, @Parameter(description = "发布信息") @RequestBody PagesPublishDto publishDto) {
         Users users = SessionUtils.getUser(request);
-        Pages pages = pagesService.getById(publishDto.getPage_id());
+        Pages pages = pagesService.getById(publishDto.getPageId());
         if (pages == null) {
             return getErrorResponse("页面不存在");
         } else {
             QueryWrapper<PagesPublish> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("page_id", publishDto.getPage_id());
+            queryWrapper.eq("page_id", publishDto.getPageId());
             long count = pagesPublishService.count(queryWrapper);
             PagesPublish publish = new PagesPublish();
             publish.setPageId(pages.getId());
@@ -83,7 +83,7 @@ public class PublishController extends BasicController {
                 pagesNew.setPreState(StringUtils.equals("pre", publishDto.getEnv()) ? 3 : null);
                 pagesNew.setPrdPublishId(StringUtils.equals("prd", publishDto.getEnv()) ? publish.getId() : null);
                 pagesNew.setPrdState(StringUtils.equals("prd", publishDto.getEnv()) ? 3 : null);
-                pagesNew.setPreviewImg(publishDto.getPreview_img());
+                pagesNew.setPreviewImg(publishDto.getPreviewImg());
                 pagesService.updateById(pagesNew);
             }
             return getUpdateResponse(result, "发布失败");
@@ -95,8 +95,8 @@ public class PublishController extends BasicController {
     public ResultResponse list(@Parameter(description = "发布信息") @RequestBody PagesPublishDto publishDto) {
 
         String env = publishDto.getEnv(); // 环境
-        Long page_id = publishDto.getPage_id(); // 页面ID
-        String userName = publishDto.getPublish_user_id(); // 发布人名称 TODO
+        Long page_id = publishDto.getPageId(); // 页面ID
+        String userName = publishDto.getUserName(); // 发布人名称 TODO
 
         if (page_id == null || page_id == 0) {
             return getErrorResponse("页面ID不能为空");

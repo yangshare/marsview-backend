@@ -173,13 +173,8 @@ public class PageController extends BasicController {
     @Operation(summary = "更新页面信息")
     public ResultResponse update(
             HttpServletResponse response,
-            @Parameter(description = "页面信息") @RequestBody PagesDto pagesDto) {
-        Pages pages = new Pages();
-        BeanUtils.copyProperties(pagesDto, pages);
+            @Parameter(description = "页面信息") @RequestBody Pages pages) {
         pages.setUpdatedAt(new Date());
-        pages.setIsEdit(pagesDto.getIs_edit());
-        pages.setIsPublic(pagesDto.getIs_public());
-        pages.setPageData(pagesDto.getPage_data());
         return getUpdateResponse(pagesService.updateById(pages), "保存失败");
     }
 
@@ -196,12 +191,12 @@ public class PageController extends BasicController {
             @Parameter(description = "回滚信息") @RequestBody PagesDto dto) {
         return getUpdateResponse(
                 pagesService.updateById(Builder.of(Pages::new)
-                        .with(Pages::setId, dto.getPage_id())
-                        .with(Pages::setStgPublishId, "stg".equals(dto.getEnv()) ? dto.getLast_publish_id() : null)
+                        .with(Pages::setId, dto.getPageId())
+                        .with(Pages::setStgPublishId, "stg".equals(dto.getEnv()) ? dto.getLastPublishId() : null)
                         .with(Pages::setStgState, "stg".equals(dto.getEnv()) ? 3 : null)
-                        .with(Pages::setPrePublishId, "pre".equals(dto.getEnv()) ? dto.getLast_publish_id() : null)
+                        .with(Pages::setPrePublishId, "pre".equals(dto.getEnv()) ? dto.getLastPublishId() : null)
                         .with(Pages::setPreState, "pre".equals(dto.getEnv()) ? 3 : null)
-                        .with(Pages::setPrdPublishId, "prd".equals(dto.getEnv()) ? dto.getLast_publish_id() : null)
+                        .with(Pages::setPrdPublishId, "prd".equals(dto.getEnv()) ? dto.getLastPublishId() : null)
                         .with(Pages::setPrdState, "prd".equals(dto.getEnv()) ? 3 : null).build()) ? 1 : 0, "操作失败");
     }
 
@@ -211,9 +206,9 @@ public class PageController extends BasicController {
     @GetMapping("getPageTemplateList")
     @Operation(summary = "获取页面模板列表")
     public ResultResponse getPageTemplateList(
-            @Parameter(description = "页码") int pageNum,
-            @Parameter(description = "每页大小") int pageSize,
-            @Parameter(description = "关键词") String keyword) {
+            @Parameter(description = "页码") @RequestParam int pageNum,
+            @Parameter(description = "每页大小") @RequestParam int pageSize,
+            @Parameter(description = "关键词") @RequestParam(required = false) String keyword) {
         QueryWrapper<Pages> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("is_public", 3);
         if (StringUtils.hasText(keyword)) {

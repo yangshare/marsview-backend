@@ -11,23 +11,10 @@ import lombok.Data;
  */
 @Data
 public class MenuDto extends Menu {
-    /**
-     * 项目ID(兼容前端传递参数)
-     */
-    private Long project_id;
 
     /**
      * 是否创建页面：1创建、2不创建
      */
-    private  Integer is_create;
+    private  Integer isCreate;
 
-    /**
-     * 页面ID(兼容前端传递参数)
-     */
-    private Long page_id;
-
-    /**
-     * 排序(兼容前端传递参数)
-     */
-    private Integer sort_num;
 }
