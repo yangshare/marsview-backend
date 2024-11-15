@@ -47,6 +47,22 @@ spring:
 
 # 三、云存储
 ## 配置
+- `pom.xml`
+```xml
+<dependency>
+    <groupId>io.github.yangshare</groupId>
+    <artifactId>simpleFS</artifactId>
+    <version>1.0.6</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/lib/simpleFS-1.0.6.jar</systemPath>
+</dependency>
+<!--这里以七牛云oss为例，其他云存储类似-->
+<dependency>
+     <groupId>com.qiniu</groupId>
+      <artifactId>qiniu-java-sdk</artifactId>
+      <version>7.17.0</version>
+</dependency>
+```
 - `application-oss.yml`
 ```yaml
 simple-fs:
@@ -110,7 +126,7 @@ simple-fs:
     region: AWS地域
     domain-url: AWS访问地址
 ```
-
+> 用到哪家oss就配置哪家即可，代码怎么判断的看下面【开发】章节。
 
 ## 开发
 > [参考文档](https://github.com/yangshare/simpleFS)

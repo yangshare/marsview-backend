@@ -19,6 +19,7 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <qiniu.version>7.17.0</qiniu.version>
   </properties>
   <dependencies>
     <dependency>
@@ -78,40 +79,32 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.17.0</version>
     </dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <!-- https://github.com/yangshare/simpleFS -->
     <dependency>
       <groupId>io.github.yangshare</groupId>
       <artifactId>simpleFS</artifactId>
       <version>1.0.6</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>aliyun-java-sdk-core</artifactId>
-          <groupId>com.aliyun</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>bcprov-jdk15on</artifactId>
-          <groupId>org.bouncycastle</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-lang3</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>fastjson</artifactId>
-          <groupId>com.alibaba</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jaxb-api</artifactId>
-          <groupId>javax.xml.bind</groupId>
-        </exclusion>
-      </exclusions>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/simpleFS-1.0.6.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>com.qiniu</groupId>
+      <artifactId>qiniu-java-sdk</artifactId>
+      <version>${qiniu.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
     </dependency>
 
     <dependency>
@@ -125,6 +118,12 @@
     <dependency>
       <groupId>com.github.xiaoymin</groupId>
       <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
