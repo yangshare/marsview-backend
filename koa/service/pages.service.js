@@ -50,7 +50,6 @@ class PagesService {
       ORDER BY 
         p.updated_at DESC LIMIT ${offset},${limit};`;
     const [result] = await connection.execute(statement, [userId, keyword || null, keyword || null, userId]);
-    console.log('list', result.length);
     return result;
   }
 

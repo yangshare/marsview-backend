@@ -15,7 +15,7 @@ CREATE TABLE `firefly` (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间戳',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=174 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC COMMENT='数据测试表'
+) ENGINE=InnoDB AUTO_INCREMENT=280 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC COMMENT='数据测试表'
 ;
 
 /******************************************/
@@ -34,7 +34,7 @@ CREATE TABLE `imgcloud` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb3 COMMENT='图片云服务'
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb3 COMMENT='图片云服务'
 ;
 
 /******************************************/
@@ -58,7 +58,7 @@ CREATE TABLE `lib` (
   PRIMARY KEY (`id`),
   KEY `ix_user_id` (`user_id`),
   KEY `ix_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=437 DEFAULT CHARSET=utf8mb3 COMMENT='自定义组件库表，用来满足自定义业务'
+) ENGINE=InnoDB AUTO_INCREMENT=601 DEFAULT CHARSET=utf8mb3 COMMENT='自定义组件库表，用来满足自定义业务'
 ;
 
 /******************************************/
@@ -83,7 +83,7 @@ CREATE TABLE `lib_publish` (
   KEY `ix_lib_id` (`lib_id`),
   KEY `ix_updated_at` (`updated_at`),
   KEY `ix_created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8mb3 COMMENT='组件库发布表'
+) ENGINE=InnoDB AUTO_INCREMENT=165 DEFAULT CHARSET=utf8mb3 COMMENT='组件库发布表'
 ;
 
 /******************************************/
@@ -95,7 +95,7 @@ CREATE TABLE `menu` (
   `project_id` bigint NOT NULL COMMENT '项目ID',
   `name` varchar(20) NOT NULL COMMENT '菜单名称',
   `parent_id` bigint DEFAULT NULL COMMENT '父级菜单ID',
-  `type` int NOT NULL COMMENT '方法 1-菜单 2-按钮 3-页面',
+  `type` int NOT NULL COMMENT '方法 1-菜单 2-按钮 3-页面 4-外链',
   `icon` varchar(100) DEFAULT NULL COMMENT '菜单图标',
   `path` varchar(100) DEFAULT NULL COMMENT '路径',
   `page_id` bigint DEFAULT NULL COMMENT '页面ID',
@@ -109,7 +109,7 @@ CREATE TABLE `menu` (
   PRIMARY KEY (`id`),
   KEY `idx_project_id` (`project_id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2873 DEFAULT CHARSET=utf8mb3 COMMENT='菜单列表'
+) ENGINE=InnoDB AUTO_INCREMENT=3873 DEFAULT CHARSET=utf8mb3 COMMENT='菜单列表'
 ;
 
 /******************************************/
@@ -123,7 +123,7 @@ CREATE TABLE `pages` (
   `user_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
   `page_data` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT '页面数据',
   `remark` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '页面描述',
-  `is_public` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否开放 1-公开 2-私有',
+  `is_public` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否开放 1-公开 2-私有 3-模板',
   `is_edit` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否可编辑 1-编辑 2-只读',
   `preview_img` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '页面预览图',
   `stg_publish_id` bigint NOT NULL DEFAULT '0' COMMENT 'stg 页面发布ID',
@@ -137,7 +137,7 @@ CREATE TABLE `pages` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2886 DEFAULT CHARSET=utf8mb3 COMMENT='项目列表'
+) ENGINE=InnoDB AUTO_INCREMENT=4030 DEFAULT CHARSET=utf8mb3 COMMENT='项目列表'
 ;
 
 /******************************************/
@@ -158,7 +158,7 @@ CREATE TABLE `pages_publish` (
   PRIMARY KEY (`id`),
   KEY `ix_updated_at` (`updated_at`),
   KEY `ix_created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=3075 DEFAULT CHARSET=utf8mb3 COMMENT='页面发布列表'
+) ENGINE=InnoDB AUTO_INCREMENT=4062 DEFAULT CHARSET=utf8mb3 COMMENT='页面发布列表'
 ;
 
 /******************************************/
@@ -178,7 +178,7 @@ CREATE TABLE `pages_role` (
   KEY `ix_updated_at` (`updated_at`),
   KEY `ix_created_at` (`created_at`),
   KEY `ix_page_id` (`page_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb3 COMMENT='页面权限列表'
+) ENGINE=InnoDB AUTO_INCREMENT=191 DEFAULT CHARSET=utf8mb3 COMMENT='页面权限列表'
 ;
 
 /******************************************/
@@ -197,7 +197,7 @@ CREATE TABLE `project_user` (
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`),
   KEY `idx_project_id` (`project_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 COMMENT='用户列表'
+) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 COMMENT='用户列表'
 ;
 
 /******************************************/
@@ -207,25 +207,23 @@ CREATE TABLE `project_user` (
 CREATE TABLE `projects` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '项目ID',
   `name` varchar(20) NOT NULL COMMENT '项目名称',
-  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `remark` varchar(100) DEFAULT NULL COMMENT '项目描述',
-  `appid` varchar(50) DEFAULT NULL COMMENT 'appid',
-  `logo` text COMMENT 'logo 地址',
-  `visit_type` int DEFAULT '1' COMMENT '方法 1-办公网 2-英特网',
-  `user_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '姓名',
-  `user_id` int NOT NULL COMMENT '通行证id',
-  `is_public` int NOT NULL DEFAULT '2' COMMENT '是否开放 1-公开 2-私有',
-  `breadcrumb` int NOT NULL DEFAULT '1' COMMENT '面包屑 1-有 0 无',
-  `layout` int NOT NULL DEFAULT '1' COMMENT '布局 1-上下 2-左右 3-上中下',
-  `menu_mode` varchar(10) NOT NULL DEFAULT 'inline' COMMENT '菜单模式：inline-内嵌 vertical-垂直  horizontal-水平',
-  `menu_theme_color` varchar(20) NOT NULL DEFAULT 'dark' COMMENT '菜单主题色：dark 深色 light-浅色 支持16进制',
-  `tag` int NOT NULL DEFAULT '1' COMMENT '多页签 1-显示 0-不显示',
-  `footer` int NOT NULL DEFAULT '0' COMMENT '页脚 1-显示 0-不显示',
-  `system_theme_color` varchar(10) NOT NULL DEFAULT '#F16622' COMMENT '系统主题色',
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `remark` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '项目描述',
+  `logo` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'logo 地址',
+  `user_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名称',
+  `user_id` int NOT NULL COMMENT '用户ID',
+  `is_public` int DEFAULT '1' COMMENT '是否开放 1-公开 2-私有',
+  `breadcrumb` int DEFAULT '1' COMMENT '面包屑 1-有 0 无',
+  `layout` int DEFAULT '1' COMMENT '布局 1-上下 2-左右 3-上中下',
+  `menu_mode` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'inline' COMMENT '菜单模式：inline-内嵌 vertical-垂直  horizontal-水平',
+  `menu_theme_color` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT 'dark' COMMENT '菜单主题色：dark 深色 light-浅色 支持16进制',
+  `tag` int DEFAULT '1' COMMENT '多页签 1-显示 0-不显示',
+  `footer` int DEFAULT '0' COMMENT '页脚 1-显示 0-不显示',
+  `system_theme_color` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '#F16622' COMMENT '系统主题色',
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2164 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=2048 COMMENT='项目列表'
+) ENGINE=InnoDB AUTO_INCREMENT=2951 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=2048 COMMENT='项目列表'
 ;
 
 /******************************************/
@@ -246,7 +244,7 @@ CREATE TABLE `roles` (
   PRIMARY KEY (`id`),
   KEY `ix_updated_at` (`updated_at`) USING BTREE,
   KEY `ix_created_at` (`created_at`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=593 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 COMMENT='页面权限列表'
+) ENGINE=InnoDB AUTO_INCREMENT=763 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 COMMENT='页面权限列表'
 ;
 
 /******************************************/
@@ -255,15 +253,14 @@ CREATE TABLE `roles` (
 /******************************************/
 CREATE TABLE `users` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `user_name` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '通行证id',
-  `user_pwd` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL COMMENT '姓名',
+  `user_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '通行证id',
+  `user_pwd` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '姓名',
   `team_id` int DEFAULT '1' COMMENT '团队ID',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
-  KEY `ix_updated_at` (`updated_at`) USING BTREE,
-  KEY `ix_created_at` (`created_at`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=547 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 ROW_FORMAT=DYNAMIC COMMENT='用户列表'
+  KEY `idx_user_name` (`user_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2222 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci AVG_ROW_LENGTH=4096 ROW_FORMAT=DYNAMIC COMMENT='用户列表'
 ;
 
 /******************************************/
@@ -282,5 +279,5 @@ CREATE TABLE `workflows` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8mb3 COMMENT='工作流模板配置'
+) ENGINE=InnoDB AUTO_INCREMENT=192 DEFAULT CHARSET=utf8mb3 COMMENT='工作流模板配置'
 ;

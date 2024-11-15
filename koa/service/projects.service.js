@@ -70,23 +70,16 @@ class ProjectsService {
   }
 
   async createProject(params) {
-    const statement =
-      'INSERT INTO projects (name, remark, logo, user_name, user_id, layout, menu_mode, menu_theme_color, system_theme_color, breadcrumb, tag, footer, is_public) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?);';
+    const statement = 'INSERT INTO projects (name, remark, logo, user_name, user_id,  is_public) VALUES (?, ?, ?, ?, ?, ?);';
     const [result] = await connection.execute(statement, [
       params.name,
       params.remark,
       params.logo,
       params.userName,
       params.userId,
-      params.layout || 1,
-      params.menuMode || 'inline',
-      params.menuThemeColor || 'dark',
-      params.systemThemeColor || 'F16622',
-      params.breadcrumb || 1,
-      params.tag || 1,
-      params.footer || 1,
       params.isPublic || 1,
     ]);
+
     return result;
   }
 
@@ -110,14 +103,14 @@ class ProjectsService {
       params.name,
       params.remark,
       params.logo,
-      params.layout || 1,
-      params.menuMode || 'inline',
-      params.menuThemeColor || 'dark',
+      params.layout,
+      params.menuMode,
+      params.menuThemeColor,
       params.systemThemeColor,
-      params.breadcrumb || 1,
-      params.tag || 1,
-      params.footer || 1,
-      params.isPublic || 1,
+      params.breadcrumb,
+      params.tag,
+      params.footer,
+      params.isPublic,
       params.id,
     ]);
     return result;
