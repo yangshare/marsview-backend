@@ -54,12 +54,12 @@ public class ProjectUserController extends BasicController {
     @Operation(summary = "获取用户列表")
     @GetMapping("list")
     public ResultResponse detail(HttpServletResponse response,
-                                 @Parameter(description = "项目ID") Long project_id,
+                                 @Parameter(description = "项目ID") Long projectId,
                                  @Parameter(description = "页码") int pageNum,
                                  @Parameter(description = "每页大小") int pageSize) {
 
         QueryWrapper<ProjectUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id", project_id);
+        queryWrapper.eq("project_id", projectId);
 
         Page<ProjectUser> page = new Page<>(pageNum, pageSize);
         IPage<ProjectUser> pageInfo = projectUserService.page(page, queryWrapper);

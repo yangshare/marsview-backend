@@ -138,7 +138,8 @@ public class UserController extends BasicController {
     }
     QueryWrapper<Users> wrapper = new QueryWrapper<>();
     wrapper.eq("user_name", searchVo.getKeyword());
-    return getResponse(userService.list(wrapper));
+    wrapper.last(" limit 1 ");
+    return getResponse(userService.getOne(wrapper));
   }
 
   public static void main(String[] args) {
