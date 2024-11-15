@@ -49,8 +49,6 @@ public class PageController extends BasicController {
     @Autowired
     private MenuService menuService;
 
-    @Resource
-    private RolesMapper rolesMapper;
 
     /**
      * 创建页面
@@ -88,10 +86,14 @@ public class PageController extends BasicController {
             HttpServletResponse response,
             @Parameter(description = "页码") int pageNum,
             @Parameter(description = "每页大小") int pageSize,
-            @Parameter(description = "类型") Integer type) {
+            @Parameter(description = "类型") Integer type,
+            @Parameter(description = "关键词") @RequestParam(required = false) String keyword) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Pages> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", users.getId());
+        if (StringUtils.hasText(keyword)) {
+            queryWrapper.like("name", keyword);
+        }
         if (type != 0) {
             queryWrapper.eq("is_public", type);
         }
