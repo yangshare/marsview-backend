@@ -41,20 +41,20 @@ public class Projects implements Serializable {
      */
     private String remark;
 
-    /**
-     * appid
-     */
-    private String appid;
+//    /**
+//     * appid
+//     */
+//    private String appid;
 
     /**
      * logo 地址
      */
     private String logo;
 
-    /**
-     * 方法 1-办公网 2-英特网
-     */
-    private Integer visitType;
+//    /**
+//     * 方法 1-办公网 2-英特网
+//     */
+//    private Integer visitType;
 
     /**
      * 姓名
@@ -126,9 +126,9 @@ public class Projects implements Serializable {
             && (this.getUpdatedAt() == null ? other.getUpdatedAt() == null : this.getUpdatedAt().equals(other.getUpdatedAt()))
             && (this.getCreatedAt() == null ? other.getCreatedAt() == null : this.getCreatedAt().equals(other.getCreatedAt()))
             && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()))
-            && (this.getAppid() == null ? other.getAppid() == null : this.getAppid().equals(other.getAppid()))
+//            && (this.getAppid() == null ? other.getAppid() == null : this.getAppid().equals(other.getAppid()))
             && (this.getLogo() == null ? other.getLogo() == null : this.getLogo().equals(other.getLogo()))
-            && (this.getVisitType() == null ? other.getVisitType() == null : this.getVisitType().equals(other.getVisitType()))
+//            && (this.getVisitType() == null ? other.getVisitType() == null : this.getVisitType().equals(other.getVisitType()))
             && (this.getUserName() == null ? other.getUserName() == null : this.getUserName().equals(other.getUserName()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
             && (this.getIsPublic() == null ? other.getIsPublic() == null : this.getIsPublic().equals(other.getIsPublic()))
@@ -150,9 +150,9 @@ public class Projects implements Serializable {
         result = prime * result + ((getUpdatedAt() == null) ? 0 : getUpdatedAt().hashCode());
         result = prime * result + ((getCreatedAt() == null) ? 0 : getCreatedAt().hashCode());
         result = prime * result + ((getRemark() == null) ? 0 : getRemark().hashCode());
-        result = prime * result + ((getAppid() == null) ? 0 : getAppid().hashCode());
+//        result = prime * result + ((getAppid() == null) ? 0 : getAppid().hashCode());
         result = prime * result + ((getLogo() == null) ? 0 : getLogo().hashCode());
-        result = prime * result + ((getVisitType() == null) ? 0 : getVisitType().hashCode());
+//        result = prime * result + ((getVisitType() == null) ? 0 : getVisitType().hashCode());
         result = prime * result + ((getUserName() == null) ? 0 : getUserName().hashCode());
         result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
         result = prime * result + ((getIsPublic() == null) ? 0 : getIsPublic().hashCode());
@@ -177,9 +177,9 @@ public class Projects implements Serializable {
         sb.append(", updatedAt=").append(updatedAt);
         sb.append(", createdAt=").append(createdAt);
         sb.append(", remark=").append(remark);
-        sb.append(", appid=").append(appid);
+//        sb.append(", appid=").append(appid);
         sb.append(", logo=").append(logo);
-        sb.append(", visitType=").append(visitType);
+//        sb.append(", visitType=").append(visitType);
         sb.append(", userName=").append(userName);
         sb.append(", userId=").append(userId);
         sb.append(", isPublic=").append(isPublic);

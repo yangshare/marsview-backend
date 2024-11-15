@@ -25,14 +25,14 @@ spring:
       password:
       database: 7
   datasource:
-    url: jdbc:mysql://192.168.6.3:3308/mars?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://106.12.220.186:3306/mars?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
-    password: yang
+    password: FutureFe
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 #服务端口
 server:
-  port: 9001
+  port: 5000
 
 #mybatis配置
 mybatis-plus:

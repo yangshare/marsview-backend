@@ -1,6 +1,7 @@
 package com.marsview.controller;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -61,13 +62,13 @@ public class ProjectController extends BasicController {
             @Parameter(description = "每页大小") @RequestParam int pageSize,
             @Parameter(description = "关键词") @RequestParam(required = false) String keyword) {
         Users users = SessionUtils.getUser(request);
-        QueryWrapper<Projects> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", users.getId());
-        if (StringUtils.hasText(keyword)) {
-            queryWrapper.like("name", keyword);
+        LambdaQueryWrapper<Projects> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Projects::getUserId, users.getId());
+        if (org.apache.commons.lang3.StringUtils.isNotEmpty(keyword)) {
+            queryWrapper.like(Projects::getName, keyword);
         }
         if (type != 0) {
-            queryWrapper.eq("is_public", type);
+            queryWrapper.eq(Projects::getIsPublic, type);
         }
 
         Page<Projects> page = new Page<>(pageNum, pageSize);

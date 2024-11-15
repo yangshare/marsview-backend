@@ -94,7 +94,7 @@ public class PageController extends BasicController {
         if (StringUtils.hasText(keyword)) {
             queryWrapper.like("name", keyword);
         }
-        if (type != 0) {
+        if (type != null && type != 0) {
             queryWrapper.eq("is_public", type);
         }
 

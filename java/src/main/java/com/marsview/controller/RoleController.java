@@ -1,6 +1,6 @@
 package com.marsview.controller;
 
-import com.alibaba.druid.util.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,13 +62,20 @@ public class RoleController extends BasicController {
 
     @Operation(summary = "获取角色列表")
     @GetMapping("list")
-    public ResultResponse list(@Parameter(description = "当前页数") int pageNum, @Parameter(description = "每页大小") int pageSize, @Parameter(description = "项目id") Long project_id) {
-        if (project_id == null || project_id == 0) {
+    public ResultResponse list(@Parameter(description = "当前页数") int pageNum,
+                               @Parameter(description = "每页大小") int pageSize,
+                               @Parameter(description = "项目id") Long projectId,
+                               @Parameter(description = "名称") String name
+            ) {
+        if (projectId == null || projectId == 0) {
             return getErrorResponse("项目id不能为空");
         }
 
-        QueryWrapper<Roles> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id", project_id);
+        LambdaQueryWrapper<Roles> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Roles::getProjectId, projectId);
+        if (StringUtils.isNotEmpty(name)) {
+            queryWrapper.like(Roles::getName, name);
+        }
 
         Page<Roles> page = new Page<>(pageNum, pageSize);
         IPage<Roles> pageInfo = rolesService.page(page, queryWrapper);
@@ -83,13 +91,13 @@ public class RoleController extends BasicController {
 
     @Operation(summary = "获取所有角色列表")
     @GetMapping("listAll")
-    public ResultResponse listAll(HttpServletResponse response, @Parameter(description = "项目id") Long project_id) {
-        if (project_id == null || project_id == 0) {
+    public ResultResponse listAll(HttpServletResponse response, @Parameter(description = "项目id") Long projectId) {
+        if (projectId == null || projectId == 0) {
             return getErrorResponse("项目id不能为空");
         }
 
         QueryWrapper<Roles> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("project_id", project_id);
+        queryWrapper.eq("project_id", projectId);
 
         List<Roles> list = rolesService.list(queryWrapper);
         return Builder.of(ResultResponse::new)
@@ -102,6 +110,13 @@ public class RoleController extends BasicController {
     @Operation(summary = "更新角色信息")
     @PostMapping("updateLimits")
     public ResultResponse updateLimits(HttpServletResponse response, @Parameter(description = "角色信息") @RequestBody Roles roles) {
+        roles.setUpdatedAt(new Date());
+        return getUpdateResponse(rolesService.updateById(roles), "设置失败");
+    }
+
+    @Operation(summary = "编辑角色信息")
+    @PostMapping("update")
+    public ResultResponse update(HttpServletResponse response, @Parameter(description = "角色信息") @RequestBody Roles roles) {
         roles.setUpdatedAt(new Date());
         return getUpdateResponse(rolesService.updateById(roles), "设置失败");
     }

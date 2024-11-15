@@ -10,6 +10,7 @@ import com.marsview.dto.UsersDto;
 import com.marsview.service.UsersService;
 import com.marsview.util.Md5Utils;
 import com.marsview.util.SessionUtils;
+import com.marsview.vo.CommSearchVo;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -131,14 +132,12 @@ public class UserController extends BasicController {
 
   @Operation(summary = "搜索用户")
   @PostMapping("search")
-  public ResultResponse search(HttpServletResponse response, @Parameter(description = "用户信息") @RequestBody Users users) {
+  public ResultResponse search(@RequestBody CommSearchVo searchVo) {
+    if (org.apache.commons.lang3.StringUtils.isBlank(searchVo.getKeyword())) {
+      return getErrorResponse("请输入搜索关键字");
+    }
     QueryWrapper<Users> wrapper = new QueryWrapper<>();
-    if (users.getId() != null) {
-      wrapper.eq("id", users.getId());
-    }
-    if (users.getUserName() != null) {
-      wrapper.eq("user_name", users.getUserName());
-    }
+    wrapper.eq("user_name", searchVo.getKeyword());
     return getResponse(userService.list(wrapper));
   }
 
