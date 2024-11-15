@@ -100,11 +100,7 @@ public class RoleController extends BasicController {
         queryWrapper.eq("project_id", projectId);
 
         List<Roles> list = rolesService.list(queryWrapper);
-        return Builder.of(ResultResponse::new)
-                .with(ResultResponse::setData, Map.of(
-                        "list", list
-                ))
-                .build();
+        return getResponse(list);
     }
 
     @Operation(summary = "更新角色信息")

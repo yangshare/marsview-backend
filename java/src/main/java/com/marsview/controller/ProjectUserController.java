@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,10 +57,14 @@ public class ProjectUserController extends BasicController {
     public ResultResponse detail(HttpServletResponse response,
                                  @Parameter(description = "项目ID") Long projectId,
                                  @Parameter(description = "页码") int pageNum,
+                                 @Parameter(description = "项目ID") String userName,
                                  @Parameter(description = "每页大小") int pageSize) {
 
         QueryWrapper<ProjectUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("project_id", projectId);
+        if (StringUtils.isNotBlank(userName)) {
+            queryWrapper.like("user_name", userName);
+        }
 
         Page<ProjectUser> page = new Page<>(pageNum, pageSize);
         IPage<ProjectUser> pageInfo = projectUserService.page(page, queryWrapper);
@@ -69,5 +74,11 @@ public class ProjectUserController extends BasicController {
                         "pageSize", pageInfo.getSize(),
                         "total", pageInfo.getTotal())
         ).build();
+    }
+
+    @Operation(summary = "创建项目用户")
+    @PostMapping("update")
+    public ResultResponse update(HttpServletResponse response, @Parameter(description = "项目用户信息") @RequestBody ProjectUser projectUser) {
+        return getUpdateResponse(projectUserService.updateById(projectUser), "新增失败");
     }
 }
