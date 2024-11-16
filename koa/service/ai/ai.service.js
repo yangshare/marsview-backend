@@ -280,9 +280,9 @@ class AiService {
         aiStream = aiRunnable.stream(
           {
             input: `
-                          continue, please do not reply with any text other than the code, and do not use markdown syntax.
-                          go continue.
-                      `,
+                    continue, please do not reply with any text other than the code, and do not use markdown syntax.
+                    go continue.
+                  `,
           },
           aiRunnableConfig,
         );

@@ -9,9 +9,9 @@ class UserService {
   }
 
   // 用户注册
-  async create(userName, userPwd) {
-    const statement = 'INSERT INTO users (user_name, user_pwd) VALUES (?, ?);';
-    const [result] = await connection.execute(statement, [userName, userPwd]);
+  async create(nickName, userName, userPwd) {
+    const statement = 'INSERT INTO users (nick_name, user_name, user_pwd) VALUES (?, ?, ?);';
+    const [result] = await connection.execute(statement, [nickName, userName, userPwd]);
     return result;
   }
   // 用户查找
@@ -19,6 +19,13 @@ class UserService {
     const statement = 'select id, user_name as userName from users where user_name = ?;';
     const [result] = await connection.execute(statement, [userName]);
     return result[0];
+  }
+  // 更新用户
+  async updateLoginTime(id, nickName) {
+    const date = new Date();
+    const statement = 'UPDATE users SET updated_at = ?, nick_name = ? WHERE id = ?;';
+    const [result] = await connection.execute(statement, [date, nickName, id]);
+    return result;
   }
 }
 module.exports = new UserService();

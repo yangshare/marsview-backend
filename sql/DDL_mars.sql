@@ -15,7 +15,7 @@ CREATE TABLE `firefly` (
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间戳',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '时间戳',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=280 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC COMMENT='数据测试表'
+) ENGINE=InnoDB AUTO_INCREMENT=281 DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC COMMENT='数据测试表'
 ;
 
 /******************************************/
@@ -58,7 +58,7 @@ CREATE TABLE `lib` (
   PRIMARY KEY (`id`),
   KEY `ix_user_id` (`user_id`),
   KEY `ix_name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=601 DEFAULT CHARSET=utf8mb3 COMMENT='自定义组件库表，用来满足自定义业务'
+) ENGINE=InnoDB AUTO_INCREMENT=604 DEFAULT CHARSET=utf8mb3 COMMENT='自定义组件库表，用来满足自定义业务'
 ;
 
 /******************************************/
@@ -109,7 +109,7 @@ CREATE TABLE `menu` (
   PRIMARY KEY (`id`),
   KEY `idx_project_id` (`project_id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3873 DEFAULT CHARSET=utf8mb3 COMMENT='菜单列表'
+) ENGINE=InnoDB AUTO_INCREMENT=3919 DEFAULT CHARSET=utf8mb3 COMMENT='菜单列表'
 ;
 
 /******************************************/
@@ -137,7 +137,7 @@ CREATE TABLE `pages` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4030 DEFAULT CHARSET=utf8mb3 COMMENT='项目列表'
+) ENGINE=InnoDB AUTO_INCREMENT=4075 DEFAULT CHARSET=utf8mb3 COMMENT='项目列表'
 ;
 
 /******************************************/
@@ -158,7 +158,7 @@ CREATE TABLE `pages_publish` (
   PRIMARY KEY (`id`),
   KEY `ix_updated_at` (`updated_at`),
   KEY `ix_created_at` (`created_at`)
-) ENGINE=InnoDB AUTO_INCREMENT=4062 DEFAULT CHARSET=utf8mb3 COMMENT='页面发布列表'
+) ENGINE=InnoDB AUTO_INCREMENT=4099 DEFAULT CHARSET=utf8mb3 COMMENT='页面发布列表'
 ;
 
 /******************************************/
@@ -197,7 +197,7 @@ CREATE TABLE `project_user` (
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`),
   KEY `idx_project_id` (`project_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 COMMENT='用户列表'
+) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 COMMENT='用户列表'
 ;
 
 /******************************************/
@@ -223,7 +223,7 @@ CREATE TABLE `projects` (
   `system_theme_color` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT '#F16622' COMMENT '系统主题色',
   PRIMARY KEY (`id`),
   KEY `idx_user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2951 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=2048 COMMENT='项目列表'
+) ENGINE=InnoDB AUTO_INCREMENT=2982 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=2048 COMMENT='项目列表'
 ;
 
 /******************************************/
@@ -244,7 +244,7 @@ CREATE TABLE `roles` (
   PRIMARY KEY (`id`),
   KEY `ix_updated_at` (`updated_at`) USING BTREE,
   KEY `ix_created_at` (`created_at`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=763 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 COMMENT='页面权限列表'
+) ENGINE=InnoDB AUTO_INCREMENT=776 DEFAULT CHARSET=utf8mb3 AVG_ROW_LENGTH=4096 COMMENT='页面权限列表'
 ;
 
 /******************************************/
@@ -253,14 +253,15 @@ CREATE TABLE `roles` (
 /******************************************/
 CREATE TABLE `users` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `user_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '通行证id',
-  `user_pwd` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '姓名',
+  `nick_name` varchar(30) DEFAULT NULL COMMENT '昵称',
+  `user_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '通行证id',
+  `user_pwd` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '姓名',
   `team_id` int DEFAULT '1' COMMENT '团队ID',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`),
   KEY `idx_user_name` (`user_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2222 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci AVG_ROW_LENGTH=4096 ROW_FORMAT=DYNAMIC COMMENT='用户列表'
+) ENGINE=InnoDB AUTO_INCREMENT=2259 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci AVG_ROW_LENGTH=4096 ROW_FORMAT=DYNAMIC COMMENT='用户列表'
 ;
 
 /******************************************/

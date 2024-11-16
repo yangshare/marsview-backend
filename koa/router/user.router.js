@@ -20,8 +20,9 @@ router.post('/login', async (ctx) => {
     util.fail(ctx, '用户名或密码错误');
     return;
   }
+  const nickName = userName.split('@')[0];
   const token = util.createToken({ userName, userId: res.id });
-
+  userService.updateLoginTime(res.id, nickName);
   util.success(ctx, {
     userId: res.id,
     userName,
@@ -88,7 +89,7 @@ router.post('/sendEmail', async (ctx) => {
       to: email, // 接收者列表
       subject: 'Marsview账号注册', // 主题行
       text: '验证码发送', // 纯文字正文
-      html: `您当前的验证码为：<b>${random}</b>，3分钟内有效。感谢您成为Marsview一员。`, // HTML正文
+      html: `当前验证码为：<b>${random}</b>，3分钟内有效。<br/><br/>我是 Marsview 开源作者，感谢您注册成为 Marsview 用户，您在搭建过程中遇到任何问题均可邮件、issue或者微信联系我。<br/><br/>邮  箱：sunnyboysoft@163.com<br/>issue：https://github.com/JackySoft/marsview/issues<br/>微  信：MarsOne666`, // HTML正文
     };
 
     await transporter.sendMail(mailOptions);
@@ -127,7 +128,8 @@ router.post('/regist', async (ctx) => {
     return;
   }
 
-  const res = await userService.create(userName, userPwd);
+  const nickName = userName.split('@')[0];
+  const res = await userService.create(nickName, userName, userPwd);
   if (res.affectedRows == 1) {
     const token = util.createToken({ userName, userId: res.insertId });
 
