@@ -5,8 +5,7 @@
   "author": "河畔一角",
   "license": "Apache-2.0",
   "scripts": {
-    "dev": "nodemon main.js",
-    "serve:prd": "nodemon main.js"
+    "dev": "nodemon main.js"
   },
   "dependencies": {
     "@baiducloud/sdk": "^1.0.1",

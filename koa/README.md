@@ -4,7 +4,7 @@
 
 #### 运行
 
-`yarn serve`
+`yarn dev`
 
 #### 目录结构
 
