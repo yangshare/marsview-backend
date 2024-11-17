@@ -51,7 +51,3 @@ git clone https://github.com/JackySoft/marsview.git
 # 由于国内网络原因，代码以gitee平台为主
 git clone https://gitee.com/yangshare/marsview4j.git
 ```
-
-## pr规范
-不用研究pr规范（发起pr自然就有模板），提交pr之前先fork项目，然后在自己的仓库里`Open a pull request`
-![img.png](doc/img.png)
