@@ -90,12 +90,14 @@ public class PageController extends BasicController {
             @Parameter(description = "关键词") @RequestParam(required = false) String keyword) {
         Users users = SessionUtils.getUser(request);
         QueryWrapper<Pages> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", users.getId());
+        
         if (StringUtils.hasText(keyword)) {
             queryWrapper.like("name", keyword);
         }
-        if (type != null && type != 0) {
-            queryWrapper.eq("is_public", type);
+        if (type != null && type ==1) {
+            queryWrapper.eq("user_id", users.getId());
+        } else  {
+            queryWrapper.ne("user_id", users.getId());
         }
 
         Page<Pages> page = new Page<>(pageNum, pageSize);

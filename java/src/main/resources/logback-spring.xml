@@ -2,7 +2,7 @@
 
 <configuration>
     <contextName>logback</contextName>
-    <property name="LOG_PATH" value="/opt/backend/logs/backend_"/>
+    <property name="LOG_PATH" value="./logs/backend_"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

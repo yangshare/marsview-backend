@@ -81,4 +81,11 @@ public class ProjectUserController extends BasicController {
     public ResultResponse update(HttpServletResponse response, @Parameter(description = "项目用户信息") @RequestBody ProjectUser projectUser) {
         return getUpdateResponse(projectUserService.updateById(projectUser), "新增失败");
     }
+
+    @Operation(summary = "删除项目用户")
+    @PostMapping("delete")
+    public ResultResponse delete(HttpServletResponse response, @Parameter(description = "项目用户信息") @RequestBody ProjectUser projectUser) {
+        return getUpdateResponse(projectUserService.removeById(projectUser.getId()), "删除失败");
+    }
+
 }
