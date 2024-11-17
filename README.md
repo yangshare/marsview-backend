@@ -2,27 +2,9 @@
 
 <a href="http://marsview.cc/"><img src="https://marsview.cdn.bcebos.com/mars-logo.png" width="150" alt="marsview logo"></a>
 
-# Marsview 低代码平台
+# Marsview 低代码平台【社区版Java后台】
 
 让搭建更简单，让开发更高效
-
-[项目文档](http://docs.marsview.cc/) |
-[开源仓库](https://github.com/JackySoft/marsview) |
-[交流群](https://imgcloud.cdn.bcebos.com/f35323e9a2625a85909cb6f02.png)
-
-</div>
-
-<div align="center">
-
-![GitHub Repo stars](https://img.shields.io/github/stars/JackySoft/marsview)
-
-![GitHub package.json version](https://img.shields.io/github/package-json/v/JackySoft/marsview)
-![GitHub License](https://img.shields.io/github/license/JackySoft/marsview)
-![version](https://img.shields.io/npm/v/amis)
-![language](https://img.shields.io/github/languages/top/JackySoft/marsview)
-![last](https://img.shields.io/github/last-commit/JackySoft/marsview.svg)
-
-[English](./README.md) | 中文
 
 </div>
 
